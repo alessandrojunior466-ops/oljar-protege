@@ -1,0 +1,26 @@
+.espacoo {
+    height: 150px;
+}
+
+.AreaVd {
+    margin: 0;
+    width: 1908px;
+    height: 1908px;
+    background: #A2AADB;
+    border: #A2AADB solid;
+    border-radius: 4%;
+    box-shadow: 0px 20px 30px #000;
+    margin-top: -70px;
+}
+
+.AreaVd {
+    margin: 0;
+    display: flex;
+}
+
+.Info h1 {
+    color: #fff;
+    margin-left: 850px;
+    font-size: 50px;
+}
+

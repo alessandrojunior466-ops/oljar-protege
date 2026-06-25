@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  background: #c0c9ee;
+
+}
+
+header {
+  height: 230px;
+}
+
+.cabecalho {
+  display: flex;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff3e4;
+  border-radius: 12px;
+  padding: 15px 30px;
+  margin: 56px;
+  max-width: 1800px;
+  box-sizing: border-box;
+}
+
+
+.cabecalho nav {
+  display: flex;
+  gap: 30px;
+}
+
+nav a {
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: rgb(91, 133, 189);
+}
+
+.rentagulo {
+  margin: 0;
+  width: 1920px;
+  height: 400px;
+  background: #A2AADB;
+}
+
+.meninaChora {
+  width: 570px;
+  height: 500px;
+  margin: 120px;
+  margin-top: -300px;
+  border: #fff solid 06px;
+  border-radius: 20px;
+  box-shadow: 0px 05px 60px #000;
+
+}
+
+.textoInfo {
+  font-size: 25px;
+  margin: 50px;
+  margin-top: -700px;
+  width: 800px;
+  text-align: start;
+  float: inline-end;
+  color: #fff;
+}
+
+.textoInfo h1 {
+  text-align: center;
+  font-size: 45px;
+}
+
+.rentagulo2 {
+  margin: 0;
+  margin-top: 900px;
+  width: 1920px;
+  height: 460px;
+  background: #A2AADB;
+}
+
+.FaCircle {
+  width: 700px;
+  height: 700px;
+  margin-top: -780px;
+  margin-left: 1150px;
+}
+
+.Textin2 {
+  color: #fff;
+  font-size: 22px;
+  text-align: start;
+  width: 920px;
+  margin-top: -460px;
+  margin-left: 60px;
+}
+
+.Textin2 h1 {
+  text-align: center;
+}
+
+.desaparecer {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.8s ease-out;
+}
+
+.desaparecer.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mane{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mane .active{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.logo {
+  margin-left: 680px;
+  margin-top: -100px;
+}
+
+.subtitu {
+  font-size: 30px;
+  color: #fff;
+  margin-left: 645px;
+  margin-top: -23px;
+  box-sizing: 0px 20px 10px #000;
+}
+
+.espaco {
+  height: 80px;
+}
+
+.Textin2 h2 {
+  text-align: center;
+  color: #d8dde6;
+}
+
+.espacina {
+  height: 200px;
+}
+
+.SobreNos {
+  color: #fff;
+  font-size: 26px;
+  text-align: start;
+  margin-left: 40px;
+}
+
+.SobreNos h2 {
+  text-align: center;
+}
+
+.imagemzinha{
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+
+.imagemzinha img{
+  margin: 0;
+  width: 800px;
+  border: #fff solid;
+  border-radius: 20px;
+  box-shadow: 0px 20px 30px #000;
+}
