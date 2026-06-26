@@ -20,4 +20,8 @@ class SiteController extends Controller
     {
         return view('contato');
     }
+    public function mostrarLogin()
+    {
+        return view('login');
+    }
 }

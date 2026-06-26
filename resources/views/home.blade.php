@@ -12,12 +12,14 @@
     <div class="container">
         <header>
             <div class="cabecalho">
-                <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto" />
+                <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto"
+                    alt="Logo" />
                 <nav>
-                    <h2><a href="/sobre">Sobre</a></h2>
-                    <h2><a href="/videos">Videos</a></h2>
-                    <h2><a href="/contato">Contato</a></h2>
-                    <h2><a href="/login">Login</a></h2>
+                    <a href="">Home</a>
+                    <a href="/sobre">Sobre</a>
+                    <a href="/videos">Videos</a>
+                    <a href="/contato">Contato</a>
+                    <a href="/login">Login</a>
                 </nav>
             </div>
         </header>
