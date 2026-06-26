@@ -9,10 +9,11 @@ Route::get('/', function () {
 })->name('home');
 
 // Suas outras rotas continuam normais abaixo...
+Route::get('/home', [SiteController::class, 'index'])->name('home');
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
 Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
 Route::get('/contato', [SiteController::class, 'contato'])->name('contato');
-Route::get('/login', [AuthController::class, 'mostrarLogin'])->name('login');
+Route::get('/login', [SiteController::class, 'mostrarLogin'])->name('login');
 
 // Cole o código da Dashboard aqui no final do routes/web.php:
 Route::middleware([
