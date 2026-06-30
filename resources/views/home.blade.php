@@ -3,7 +3,6 @@
 @section('content')
     <div class="min-h-screen bg-[#b9b7df]">
 
-        <!-- NAVBAR -->
         <nav class="bg-[#f0e8db] shadow-md">
             <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
@@ -51,8 +50,7 @@
 
                 <div class="mt-12 rounded-3xl overflow-hidden shadow-xl">
 
-                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1400"
-                        class="w-full h-[450px] object-cover">
+                    <img src="banner1.png" class="w-full h-[450px] object-cover">
 
                 </div>
 
