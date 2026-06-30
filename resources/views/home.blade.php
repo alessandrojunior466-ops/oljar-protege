@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="flex gap-8 font-bold text-[#1f3264]">
-                    <a href="#" class="hover:text-purple-700">Sobre</a>
+                    <a href="/sobre" class="hover:text-purple-700">Sobre</a>
                     <a href="#" class="hover:text-purple-700">Vídeos</a>
                     <a href="#" class="hover:text-purple-700">Blogs</a>
                     <a href="#" class="hover:text-purple-700">Login</a>
