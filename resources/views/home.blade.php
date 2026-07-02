@@ -58,7 +58,7 @@
 
         </section>
 
-        <!-- BOLINHAS -->
+
         <section class="py-24">
 
             <div class="max-w-5xl mx-auto">
@@ -91,7 +91,6 @@
 
         </section>
 
-        <!-- CARDS -->
         <section class="py-20">
 
             <div class="max-w-6xl mx-auto px-6">
@@ -149,7 +148,7 @@
 
         </section>
 
-        <!-- CTA -->
+
         <section class="pb-24">
 
             <div class="max-w-4xl mx-auto px-6">
