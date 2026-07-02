@@ -1,189 +1,168 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="pt-br">
 
-@section('content')
-    <div class="min-h-screen bg-[#b9b7df]">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Olhar Que Protege</title>
+    <link rel="stylesheet" href="{{ asset('assets/css/sobre.css') }}">
+</head>
 
-        <nav class="bg-[#f0e8db] shadow-md">
-            <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<body>
+    <div class="container">
+        <header>
+            <div class="cabecalho">
+                <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto"
+                    alt="Logo Olhar Que Protege" />
+                <nav>
+                    <a href="{{ route('home') }}">Home</a>
+                    <a href="/sobre">Sobre</a>
+                    <a href="/videos">Vídeos</a>
+                    <a href="/contato">Contato</a>
+                    <a href="/login">Login</a>
+                </nav>
+            </div>
+        </header>
 
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
-                        🛡️
+        <main>
+
+            <div class="conteudo-info">
+
+                <section class="secao-bloco">
+                    <img class="imagem-bloco" src="{{ asset('assets/img/tiazinha.jpg') }}" alt="Menina Chorando" />
+                    <div class="texto-bloco">
+                        <h1>Monitoramento Digital: Proteção Essencial para Suas Filhas</h1>
+                        <p>
+                            A internet representa hoje uma dimensão essencial da vida, oferecendo
+                            um portal vasto de conhecimento e conexão. Contudo, para crianças e
+                            adolescentes, essa ferramenta poderosa está intrinsecamente ligada a
+                            uma série de riscos e vulnerabilidades que exigem uma atuação
+                            protetora e ativa dos pais. Monitorar o uso da internet por suas
+                            filhas — sejam elas crianças curiosas, pré-adolescentes exploradoras
+                            ou adolescentes em busca de identidade — não deve ser visto como uma
+                            invasão, mas sim como uma medida fundamental de segurança, carinho e
+                            orientação no complexo ambiente digital.
+                        </p>
+                        <p>
+                            O principal motivo para a vigilância é a proteção contra predadores e
+                            assédio online. Indivíduos mal-intencionados frequentemente se
+                            disfarçam em plataformas populares, como jogos e redes sociais,
+                            visando a aproximação e o aliciamento. O acompanhamento regular e
+                            discreto permite identificar e bloquear rapidamente contatos ou
+                            comportamentos inadequados. Além disso, o monitoramento é vital na
+                            prevenção e intervenção contra o cyberbullying, garantindo que suas
+                            filhas não sejam vítimas de agressões virtuais que podem causar danos
+                            psicológicos profundos e duradouros, ou mesmo autoras desses atos,
+                            necessitando de correção imediata.
+                        </p>
+                        <p>
+                            Outra preocupação central é a exposição a conteúdo inapropriado.
+                            Apesar dos filtros e restrições, o acesso acidental ou intencional a
+                            material violento, explícito ou que promova extremismo é um risco
+                            constante. A supervisão atenta permite garantir que o consumo digital
+                            esteja alinhado com a maturidade da criança ou adolescente. Igualmente
+                            crucial é a necessidade de gerenciar a saúde mental e o tempo de tela.
+                            A constante comparação com padrões irreais nas redes sociais pode
+                            levar a distúrbios de autoimagem, ansiedade e depressão. Além disso, o
+                            uso descontrolado pode resultar em vício em telas, prejudicando o
+                            desempenho acadêmico, o sono e as interações sociais presenciais. Por
+                            fim, a navegação sem supervisão expõe a família a riscos de fraudes e
+                            roubo de dados, já que menores nem sempre compreendem os perigos de
+                            compartilhar informações pessoais ou clicar em links maliciosos.
+                        </p>
+                        <p>
+                            A maneira mais eficaz de monitorar, no entanto, é através de uma
+                            combinação de tecnologia e diálogo aberto. O estabelecimento conjunto
+                            de regras claras sobre tempo de uso e sites permitidos, o uso de
+                            ferramentas de controle parental e a simples prática de manter os
+                            dispositivos em áreas comuns da casa são passos construtivos. O
+                            objetivo final não é a fiscalização punitiva, mas sim educar e
+                            capacitar suas filhas para que desenvolvam uma relação segura,
+                            equilibrada e responsável com a vasta e poderosa ferramenta que é a
+                            internet.
+                        </p>
                     </div>
+                </section>
 
-                    <div>
-                        <h1 class="font-black text-xl text-[#1f3264] leading-none">
-                            OLHAR
-                        </h1>
-
-                        <h1 class="font-black text-xl text-[#1f3264] leading-none">
-                            QUE PROTEGE
-                        </h1>
+                <section class="secao-bloco invertida">
+                    <img class="imagem-bloco" src="{{ asset('assets/img/familycircle.png') }}" alt="Círculo Familiar" />
+                    <div class="texto-bloco">
+                        <h1>Olhar Que Protege: O Conhecimento que Transforma Preocupação em Segurança Real.</h1>
+                        <h2>A sua filha merece crescer protegida, e você merece a tranquilidade de saber como
+                            defendê-la.</h2>
+                        <p>
+                            Em um mundo de constante evolução, as ameaças à segurança de nossas
+                            meninas também mudam. A inocência da infância é colocada à prova
+                            diariamente, muitas vezes, em ambientes que nem conseguimos enxergar —
+                            especialmente no vasto universo digital. É por isso que criamos o
+                            "Olhar Que Protege": uma plataforma de vídeos projetada para ser o seu
+                            guia definitivo na missão de monitorar e proteger sua filha menor de
+                            idade.
+                        </p>
+                        <p>
+                            Nós oferecemos mais do que meras dicas; entregamos um treinamento
+                            prático e acessível que capacita pais e mães a entenderem e agirem
+                            sobre os riscos contemporâneos. Você aprenderá a navegar pelas redes
+                            sociais e aplicativos com o conhecimento de um especialista,
+                            identificando sinais sutis de cyberbullying, assédio ou envolvimento
+                            com conteúdos perigosos. Além disso, ensinamos você a ir além da tela,
+                            reconcendo alterações comportamentais cruciais que indicam a
+                            necessidade de uma conversa e intervenção.
+                        </p>
+                        <p>
+                            O "Olhar Que Protege" é a ponte entre o seu amor incondicional e a
+                            ação protetiva eficaz. Não se trata de invadir a privacidade, mas de
+                            construir uma rede de segurança sólida baseada na observação informada
+                            e no diálogo aberto. Proporcione a si mesmo a paz de espírito que vem
+                            de estar ativamente preparado.
+                        </p>
                     </div>
-                </div>
-
-                <div class="flex gap-8 font-bold text-[#1f3264]">
-                    <a href="/">Home</a>
-                    <a href="#">Vídeos</a>
-                    <a href="#">Blogs</a>
-                    <a href="#">Login</a>
-                </div>
-
-            </div>
-        </nav>
-
-        <section class="py-16 text-center">
-
-            <h1 class="text-5xl font-black text-[#6d69a5]">
-                SOBRE O PROJETO
-            </h1>
-
-        </section>
-
-        <section class="max-w-7xl mx-auto px-6 py-12">
-
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-
-                <div>
-                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
-                        class="rounded-3xl shadow-xl w-full">
-                </div>
-
-                <div class="bg-[#a4a1d8] p-8 rounded-3xl text-white shadow-lg">
-
-                    <h2 class="text-3xl font-bold mb-6">
-                        Por que monitorar?
-                    </h2>
-
-                    <div class="space-y-5 text-sm leading-7">
-
-                        <p>
-                            A internet representa hoje uma dimensão essencial da vida,
-                            oferecendo um portal vasto de conhecimento e conexão.
-                            Contudo, para crianças e adolescentes, essa ferramenta
-                            poderosa está ligada a uma série de riscos e
-                            vulnerabilidades que exigem uma atuação protetora e ativa
-                            dos pais.
-                        </p>
-
-                        <p>
-                            Monitorar o uso da internet não deve ser visto como invasão,
-                            mas como uma medida fundamental de segurança, carinho e
-                            orientação dentro do ambiente digital.
-                        </p>
-
-                        <p>
-                            O principal motivo para a vigilância é a proteção contra
-                            predadores, assédio online e cyberbullying. O
-                            acompanhamento permite identificar rapidamente situações de
-                            risco e agir antes que causem danos graves.
-                        </p>
-
-                        <p>
-                            Além disso, a supervisão ajuda a evitar exposição a
-                            conteúdos inadequados, golpes, roubo de dados e excesso de
-                            tempo de tela, protegendo a saúde mental e emocional das
-                            crianças e adolescentes.
-                        </p>
-
-                    </div>
-
-                </div>
+                </section>
 
             </div>
 
-        </section>
-
-        <section class="max-w-7xl mx-auto px-6 py-16">
-
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-
-                <div class="bg-[#a4a1d8] p-8 rounded-3xl text-white shadow-lg">
-
-                    <h2 class="text-3xl font-bold mb-6">
-                        Olhar Que Protege
-                    </h2>
-
-                    <h3 class="text-xl font-semibold mb-4">
-                        O conhecimento que transforma preocupação em segurança real.
-                    </h3>
-
-                    <p class="mb-5 leading-7">
-                        A sua filha merece crescer protegida, e você merece a
-                        tranquilidade de saber como defendê-la.
-                    </p>
-
-                    <p class="mb-5 leading-7">
-                        Criamos o Olhar Que Protege para ser uma plataforma de vídeos
-                        educativos e treinamentos voltados à proteção de crianças e
-                        adolescentes no ambiente digital.
-                    </p>
-
-                    <p class="leading-7">
-                        Ensinamos pais e responsáveis a reconhecer sinais de
-                        cyberbullying, assédio, golpes, manipulação e outros perigos,
-                        fortalecendo o diálogo familiar e criando uma rede de proteção
-                        baseada em informação e prevenção.
-                    </p>
-
-                </div>
-
-                <div>
-                    <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300"
-                        class="rounded-full shadow-xl w-[450px] h-[450px] object-cover mx-auto">
-                </div>
-
-            </div>
-
-        </section>
-
-        <section class="max-w-6xl mx-auto px-6 pb-24">
-
-            <div class="bg-[#8e8ac9] rounded-3xl p-12 shadow-xl">
-
-                <h2 class="text-4xl font-black text-white mb-8 text-center">
-                    Como surgiu o "Olhar Que Protege"
-                </h2>
-
-                <div class="text-white leading-8 space-y-5">
-
-                    <p>
-                        O projeto foi desenvolvido pelos alunos Alessandro, Ana,
-                        Felipe e Alexandre do curso técnico em Tecnologia da
-                        Informação.
-                    </p>
-
-                    <p>
-                        Nossa iniciativa nasceu do compromisso com a Agenda 2030 da
-                        ONU, especialmente com a ODS 5.2, que busca eliminar todas as
-                        formas de violência contra mulheres e meninas.
-                    </p>
-
-                    <p>
-                        Percebemos que grande parte dos riscos enfrentados por crianças
-                        e adolescentes acontece no ambiente digital, através de
-                        cyberbullying, exploração, assédio e contato com pessoas
-                        mal-intencionadas.
-                    </p>
-
-                    <p>
-                        O Olhar Que Protege transforma conhecimento técnico em
-                        conteúdo acessível para pais e responsáveis, ensinando como
-                        identificar riscos, fortalecer o diálogo e criar um ambiente
-                        seguro dentro e fora da internet.
-                    </p>
-
-                    <p>
-                        Acreditamos que a Tecnologia da Informação deve ser usada para
-                        proteger vidas, gerar impacto social e construir um futuro
-                        mais seguro para a próxima geração.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
+            <section class="SobreNos">
+                <h2>Como surgiu o "Olhar Que Protege"</h2>
+                <p>
+                    Temos o prazer de apresentar o "Olhar Que Protege", um projeto desenvolvido com paixão e expertise
+                    por nossa equipe de alunos do curso técnico em Tecnologia da Informação: Alessandro, Ana, Felipe e
+                    Alexandre. Nossa iniciativa nasceu não apenas de um desafio acadêmico, mas de um profundo
+                    compromisso com a sociedade, alinhado diretamente à Agenda 2030 da Organização das Nações Unidas. O
+                    "Olhar Que Protege" é a nossa resposta tecnológica à meta 5.2 dos Objetivos de Desenvolvimento
+                    Sustentável (ODS), que visa eliminar todas as formas de violência contra todas as mulheres e
+                    meninas.
+                </p>
+                <br>
+                <p>
+                    Em um mundo onde a violência e o risco, especialmente o abuso e a exploração, se manifestam
+                    cada vez mais no ambiente digital, sentimos a urgência de criar uma ferramenta de empoderamento para
+                    os pais. O "Olhar Que Protege" é uma plataforma de vídeos educativos que transforma o conhecimento
+                    técnico em informações acessíveis, capacitando os responsáveis a monitorar proativamente o uso que
+                    suas filhas menores de idade fazem da internet e das redes sociais. Nosso conteúdo ensina a
+                    identificar e prevenir situações de risco online, como cyberbullying e contato com predadores, e,
+                    crucialmente, a fortalecer o diálogo em casa, promovendo um ambiente seguro e de confiança.
+                </p>
+                <br>
+                <p>
+                    O projeto é a prova de que a Tecnologia da Informação não é apenas sobre códigos e sistemas, mas
+                    sobre
+                    soluções que salvam, protegem e transformam vidas. Por meio de uma interface simples e conteúdo
+                    didático, estamos utilizando nossas habilidades em TI para construir um futuro onde as meninas
+                    possam crescer livres do medo e da violência, online e offline. Esta é a nossa contribuição,
+                    utilizando a TI como ferramenta para alcançar a ODS 5.2, garantindo um "Olhar Que Protege" a geração
+                    de amanhã.
+                </p>
+            </section>
+        </main>
     </div>
-@endsection
+
+    <div class="mane">
+        <div class="imagemzinha">
+            <img src="{{ asset('assets/img/Capturar.PNG') }}" alt="Captura de tela do projeto" />
+        </div>
+    </div>
+
+    <script src="{{ asset('js/sobre.js') }}"></script>
+</body>
+
+</html>
