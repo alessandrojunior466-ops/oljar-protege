@@ -1,0 +1,170 @@
+body {
+            background-color: #B4B9E6; /* Tom lavanda suave de fundo */
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px; /* Mantém o alinhamento perfeito de todos os blocos */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* --- CABEÇALHO HARMONIOSO --- */
+        .cabecalho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #FFF5E9; /* Bege claro do cabeçalho */
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .cabecalho nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .cabecalho nav a {
+            text-decoration: none;
+            color: #0F1E36;
+            font-weight: 700;
+            font-size: 18px;
+            transition: color 0.2s ease;
+        }
+
+        .cabecalho nav a:hover {
+            color: #E25B26; /* Laranja da logo para o efeito hover */
+        }
+
+        /* --- CONTEÚDO DO BLOG --- */
+        .container-blog {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            padding: 10px 0;
+        }
+
+        .titulo-blog {
+            text-align: center;
+            color: #241468; /* Roxo escuro profundo para contraste */
+            font-size: 2.5rem;
+            letter-spacing: 3px;
+            margin: 20px 0 10px 0;
+        }
+
+        /* Card Destaque (Grande) */
+        .card-post-grande {
+            display: flex;
+            background-color: #CBD0F7; /* Lavanda médio para as caixas de texto */
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-post-grande .imagem-post {
+            flex: 1;
+            min-height: 350px;
+        }
+
+        .card-post-grande .imagem-post img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-post-grande .conteudo-post {
+            flex: 1.2;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: #1A0E46;
+        }
+
+        .card-post-grande h2 {
+            font-size: 1.8rem;
+            margin-top: 0;
+            line-height: 1.3;
+        }
+
+        .destaque-roxo {
+            color: #5B259F;
+            font-weight: 800;
+        }
+
+        /* Grade de Posts Menores (Lado a Lado) */
+        .grade-posts {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Divide em duas colunas perfeitas */
+            gap: 30px;
+        }
+
+        .card-post-pequeno {
+            background-color: #CBD0F7;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-post-pequeno img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .conteudo-post-pequeno {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            color: #1A0E46;
+        }
+
+        .card-post-pequeno h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            line-height: 1.4;
+        }
+
+        /* Tags Circulares Customizadas */
+        .tags-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tag-circular {
+            background-color: #FFF5E9; /* Mesma cor bege do cabeçalho trazendo harmonia */
+            color: #241468;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Ajuste de Tela para Celulares */
+        @media (max-width: 768px) {
+            .cabecalho, .card-post-grande {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .cabecalho nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .grade-posts {
+                grid-template-columns: 1fr;
+            }
+        }

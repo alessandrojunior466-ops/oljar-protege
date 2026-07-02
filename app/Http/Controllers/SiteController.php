@@ -16,9 +16,9 @@ class SiteController extends Controller
         return view('videos');
     }
 
-    public function contato()
+    public function blog()
     {
-        return view('contato');
+        return view('blog');
     }
     public function mostrarLogin()
     {
