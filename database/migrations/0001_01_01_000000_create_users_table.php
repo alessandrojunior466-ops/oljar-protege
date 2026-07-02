@@ -18,12 +18,7 @@ return new class extends Migration
 
             $table->string('password');
 
-            $table->date('data_nasc');
-
-            // Campos do seu projeto
-            $table->integer('tipo')->default(0); // 0 = Cliente | 1 = Administrador
-            $table->string('cidade', 100)->nullable();
-            $table->string('estado', 100)->nullable();
+            $table->date('data_nascimento')->nullable();
 
             $table->rememberToken();
             $table->timestamps();
