@@ -18,7 +18,11 @@
                     <a href="{{ route('home') }}">Home</a>
                     <a href="/sobre">Sobre</a>
                     <a href="/videos">Vídeos</a>
+<<<<<<< HEAD
                     <a href="/contato">Blog</a>
+=======
+                    <a href="/blog">Blog</a>
+>>>>>>> 21ef279a6863b0615344a6fdb696cafb7c6fc8fa
                     <a href="/login">Login</a>
                 </nav>
             </div>
