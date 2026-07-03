@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+
+// Importação explícita de todos os seus seeders personalizados
+use Database\Seeders\UsuarioSeeder;
+use Database\Seeders\BlogSeeder;
+use Database\Seeders\VideosSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +19,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            UsuarioSeeder::class, // Cria os usuários primeiro
+            BlogSeeder::class,    // Cria as categorias do blog
+            VideosSeeder::class,  // Cria os vídeos vinculados às categorias
         ]);
     }
 }
