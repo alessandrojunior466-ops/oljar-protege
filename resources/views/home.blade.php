@@ -18,7 +18,7 @@
                     <a href="">Home</a>
                     <a href="/sobre">Sobre</a>
                     <a href="/videos">Videos</a>
-                    <a href="/contato">Contato</a>
+                    <a href="/blog">Blog</a>
                     <a href="/login">Login</a>
                 </nav>
             </div>
