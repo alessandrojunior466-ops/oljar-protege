@@ -27,6 +27,7 @@
         </header>
 
         <!-- CONTEÚDO PRINCIPAL -->
+        <!-- CONTEÚDO PRINCIPAL -->
         <main class="container-blog">
 
             <!-- Empurra o conteúdo para baixo do menu fixo -->
@@ -34,56 +35,60 @@
 
             <h1 class="titulo-blog">BLOG</h1>
 
-            <!-- Post em Destaque (Grande) -->
-            <div class="card-post-grande">
-                <div class="imagem-post">
-                    <!-- Imagem online: Jovem usando computador com fone de ouvido -->
-                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop"
-                        alt="Perigos no Discord">
-                </div>
-                <div class="conteudo-post">
-                    <h2>ENTENDA OS <span class="destaque-roxo">RISCOS DO DISCORD</span> E PROTEJA SEU FILHO</h2>
-                    <p>Um guia essencial para pais, entendendo os risks ao utilizar a plataforma do Discord e como
-                        garantir um ambiente seguro...</p>
-                    <div class="tags-container">
-                        <span class="tag-circular">DISCORD</span>
-                        <span class="tag-circular">SEGURANÇA DIGITAL</span>
+            @if ($destaque)
+                <!-- Post em Destaque Dinâmico (Sempre a primeira publicação do banco) -->
+                <div class="card-post-grande">
+                    <div class="imagem-post">
+                        <!-- Imagem do banco ou padrão se estiver vazia -->
+                        <img src="{{ $destaque->imagem ? asset($destaque->imagem) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop' }}"
+                            alt="{{ $destaque->titulo }}">
+                    </div>
+                    <div class="conteudo-post">
+                        <span class="post-date"
+                            style="font-size: 12px; color: #6b7280; display: block; margin-bottom: 5px;">
+                            {{ $destaque->created_at->format('d/m/Y') }}
+                        </span>
+                        <h2>{{ $destaque->titulo }}</h2>
+                        <p>{{ $destaque->conteudo }}</p>
+                        <div class="tags-container">
+                            <span class="tag-circular">DESTAQUE</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
-            <!-- Grade de Posts Menores (Lado a Lado) -->
+            <!-- Grade de Posts Menores -->
             <div class="grade-posts">
-                <!-- Post 2 -->
-                <div class="card-post-pequeno">
-                    <!-- Imagem online: Criança estudando no notebook com segurança -->
-                    <img src="https://institutovillamil.com.br/wp-content/uploads/2020/09/uso-de-telas-na-infancia-instituto-villamil-3-1.png"
-                        alt="Post">
-                    <div class="conteudo-post-pequeno">
-                        <h3>CRIANDO UM AMBIENTE DIGITAL SEGURO: DICAS PRÁTICAS</h3>
-                        <p>Como aplicar regras de monitoramento saudáveis no dia a dia da sua família...</p>
-                        <div class="tags-container">
-                            <span class="tag-circular">DIGITAL</span>
-                            <span class="tag-circular">CUIDAR</span>
-                        </div>
-                    </div>
-                </div>
+                @forelse($restante as $post)
+                    <!-- Card de Post Individual -->
+                    <div class="card-post-pequeno">
+                        @if ($post->imagem)
+                            <img src="{{ asset($post->imagem) }}" alt="{{ $post->titulo }}"
+                                style="width: 100%; height: 180px; object-fit: cover;">
+                        @endif
+                        <div class="conteudo-post-pequeno">
+                            <span class="post-date"
+                                style="font-size: 11px; color: #9ca3af; display: block; margin-bottom: 5px;">
+                                {{ $post->created_at->format('d/m/Y') }}
+                            </span>
 
-                <!-- Post 3 -->
-                <div class="card-post-pequeno">
-                    <!-- Imagem online: Mãe/Pai orientando a filha no computador -->
-                    <img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?q=80&w=500&auto=format&fit=crop"
-                        alt="Post">
-                    <div class="conteudo-post-pequeno">
-                        <h3>A IMPORTÂNCIA DO DIÁLOGO ABERTO SOBRE RISCOS</h3>
-                        <p>Orientar e oferecer diálogo aberto é a melhor forma de garantir a segurança digital das
-                            crianças...</p>
-                        <div class="tags-container">
-                            <span class="tag-circular">AMAR</span>
-                            <span class="tag-circular">EVITE</span>
+                            <h3>{{ $post->titulo }}</h3>
+                            <p>{{ $post->conteudo }}</p>
+
+                            <div class="tags-container">
+                                <span class="tag-circular">LEITURA</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @empty
+                    @if (!$destaque)
+                        <!-- Exibe apenas se o banco estiver 100% vazio (sem destaque e sem listagem) -->
+                        <div class="empty-state"
+                            style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #9ca3af;">
+                            <p>Nenhuma publicação encontrada no momento. Volte mais tarde!</p>
+                        </div>
+                    @endif
+                @endforelse
             </div>
         </main>
 
