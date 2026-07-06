@@ -11,7 +11,7 @@
 <body>
     <div class="container">
 
-        <!-- CABEÇALHO -->
+        <!-- CABEÇALHO FIXO ORIGINAL -->
         <header>
             <div class="cabecalho">
                 <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto"
@@ -28,6 +28,10 @@
 
         <!-- CONTEÚDO PRINCIPAL -->
         <main class="container-blog">
+
+            <!-- Empurra o conteúdo para baixo do menu fixo -->
+            <div class="espacoo"></div>
+
             <h1 class="titulo-blog">BLOG</h1>
 
             <!-- Post em Destaque (Grande) -->
@@ -39,7 +43,7 @@
                 </div>
                 <div class="conteudo-post">
                     <h2>ENTENDA OS <span class="destaque-roxo">RISCOS DO DISCORD</span> E PROTEJA SEU FILHO</h2>
-                    <p>Um guia essencial para pais, entendendo os riscos ao utilizar a plataforma do Discord e como
+                    <p>Um guia essencial para pais, entendendo os risks ao utilizar a plataforma do Discord e como
                         garantir um ambiente seguro...</p>
                     <div class="tags-container">
                         <span class="tag-circular">DISCORD</span>
@@ -53,7 +57,7 @@
                 <!-- Post 2 -->
                 <div class="card-post-pequeno">
                     <!-- Imagem online: Criança estudando no notebook com segurança -->
-                    <img src="https://images.unsplash.com/photo-1580894732444-8fecef2101aa?q=80&w=500&auto=format&fit=crop"
+                    <img src="https://institutovillamil.com.br/wp-content/uploads/2020/09/uso-de-telas-na-infancia-instituto-villamil-3-1.png"
                         alt="Post">
                     <div class="conteudo-post-pequeno">
                         <h3>CRIANDO UM AMBIENTE DIGITAL SEGURO: DICAS PRÁTICAS</h3>

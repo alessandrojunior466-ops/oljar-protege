@@ -1,28 +1,44 @@
 <?php
 
-use App\Http\Controllers\SiteController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< HEAD
-// Rota Principal do seu site
-Route::get('/', [SiteController::class, 'index'])->name('home');
-=======
-// ... Suas outras rotas (Sobre, Videos, Contato) que fizemos antes ficam aqui em cima ...
+// --- PÁGINAS PÚBLICAS ---
+
+// Home (Página Inicial)
 Route::get('/', function () {
-    return view('home');
+    return view('home'); // Mudamos de 'welcome' para 'home' para ficar mais organizado
 })->name('home');
->>>>>>> 21ef279a6863b0615344a6fdb696cafb7c6fc8fa
 
-// Outras rotas do seu site
-Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
-Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
-Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
-<<<<<<< HEAD
-=======
-Route::get('/login', [SiteController::class, 'mostrarLogin'])->name('login');
->>>>>>> 21ef279a6863b0615344a6fdb696cafb7c6fc8fa
+// Sobre
+Route::get('/sobre', function () {
+    return view('sobre');
+})->name('sobre');
 
-// Se o arquivo de autenticação existir, ele carrega. Se não, evita quebrar o site!
-if (file_exists(__DIR__.'/auth.php')) {
-    require __DIR__.'/auth.php';
-}
+// Vídeos
+Route::get('/videos', function () {
+    return view('videos');
+})->name('videos');
+
+// Blog
+Route::get('/blog', function () {
+    return view('blog');
+})->name('blog');
+
+
+// --- ÁREA RESTRITA (AUTENTICADA) ---
+
+// Dashboard (Apenas usuários logados acessam)
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Perfil do Usuário
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Carrega as rotas nativas de Login, Registro, etc.
+require __DIR__.'/auth.php';

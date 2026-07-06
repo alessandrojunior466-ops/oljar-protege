@@ -15,11 +15,11 @@
                 <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto"
                     alt="Logo" />
                 <nav>
-                    <a href="">Home</a>
-                    <a href="/sobre">Sobre</a>
-                    <a href="/videos">Videos</a>
-                    <a href="/blog">Blog</a>
-                    <a href="/login">Login</a>
+                    <a href="{{ route('home') }}">Home</a>
+                    <a href="{{ route('sobre') }}">Sobre</a>
+                    <a href="{{ route('videos') }}">Vídeos</a>
+                    <a href="{{ route('blog') }}">Blog</a>
+                    <a href="{{ route('login') }}">Login</a>
                 </nav>
             </div>
         </header>
