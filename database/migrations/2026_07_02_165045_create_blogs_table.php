@@ -12,22 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('blogs', function (Blueprint $table) {
-            $table->id();
-
-            $table->string('nome', 100);
-            $table->longText('treinamento');
-            $table->text('avaliacao')->nullable();
-
-            $table->string('complemento')->nullable();
-            $table->string('materialEdu')->nullable();
-
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-
-            $table->timestamps();
-        });
-    }
+    $table->id();
+    $table->string('titulo');
+    $table->text('conteudo');
+    $table->string('imagem')->nullable(); // <-- Adicione esta linha
+    $table->timestamps();
+});
+    } // <-- Agora a chave fecha corretamente aqui!
 
     /**
      * Reverse the migrations.

@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Olhar Que Protege</title>
-    <link rel="stylesheet" href="{{ asset('assets/css/sobre.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/video.css') }}">
 </head>
 
 <body>
@@ -16,22 +16,31 @@
                     alt="Logo Olhar Que Protege" />
                 <nav>
                     <a href="{{ route('home') }}">Home</a>
-                    <a href="/sobre">Sobre</a>
-                    <a href="/videos">Vídeos</a>
-                    <a href="/blog">Blog</a>
-                    <a href="/login">Login</a>
+                    <a href="{{ route('sobre') }}">Sobre</a>
+                    <a href="{{ route('videos') }}">Vídeos</a>
+                    <a href="{{ route('blog') }}">Blog</a>
+                    <a href="{{ route('login') }}">Login</a>
                 </nav>
             </div>
         </header>
 
         <main>
-
             <div class="conteudo-info">
 
-                <section class="secao-bloco">
+                <div class="espacoo"></div>
 
+                <div class="Info">
+                    <h1>Vídeos</h1>
+                </div>
 
-                    <script src="{{ asset('js/sobre.js') }}"></script>
+                <div class="AreaVd">
+                    <video id="meuVideo" src="{{ asset('assets/video/kjknjkn.mp4') }}" loop playsinline
+                        controls></video>
+                </div>
+
+            </div>
+        </main>
+    </div>
 </body>
 
 </html>
