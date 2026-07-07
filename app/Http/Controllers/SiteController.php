@@ -26,7 +26,7 @@ class SiteController extends Controller
         return view('blog');
     }
 
-    public function mostrarLogin()
+    public function login()
     {
         return view('auth.login');
     }
