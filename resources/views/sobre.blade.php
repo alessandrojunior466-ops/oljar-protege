@@ -16,10 +16,10 @@
                     alt="Logo Olhar Que Protege" />
                 <nav>
                     <a href="{{ route('home') }}">Home</a>
-                    <a href="/sobre">Sobre</a>
-                    <a href="/videos">Vídeos</a>
-                    <a href="/blog">Blog</a>
-                    <a href="/login">Login</a>
+                    <a href="{{ route('sobre') }}">Sobre</a>
+                    <a href="{{ route('videos') }}">Vídeos</a>
+                    <a href="{{ route('blog') }}">Blog</a>
+                    <a href="{{ route('login') }}">Login</a>
                 </nav>
             </div>
         </header>
