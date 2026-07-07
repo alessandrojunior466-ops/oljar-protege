@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SiteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,9 +11,7 @@ use App\Http\Controllers\SiteController;
 Route::get('/', [SiteController::class, 'index'])->name('home');
 
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
-
 Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
-
 Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
 
 Route::get('/login', [SiteController::class, 'login'])->name('login');
