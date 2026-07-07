@@ -6,9 +6,14 @@ use Illuminate\Http\Request;
 
 class SiteController extends Controller
 {
+    public function index()
+    {
+        return view('home');
+    }
+
     public function sobre()
     {
-        return view('sobre'); // Garanta que você tem o arquivo sobre.blade.php em resources/views
+        return view('sobre');
     }
 
     public function videos()
@@ -20,8 +25,9 @@ class SiteController extends Controller
     {
         return view('blog');
     }
+
     public function mostrarLogin()
     {
-        return view('login');
+        return view('auth.login');
     }
 }
