@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+
+// Importação explícita de todos os seus seeders personalizados
+use Database\Seeders\UsuarioSeeder;
+use Database\Seeders\BlogSeeder;
+use Database\Seeders\VideosSeeder;
 
 class DatabaseSeeder extends Seeder
 {
