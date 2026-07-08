@@ -2,18 +2,11 @@
 <html lang="pt-br">
 
 <head>
-<<<<<<< HEAD
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Olhar Que Protege - Vídeos</title>
 
     <link rel="stylesheet" href="{{ asset('assets/css/video2.css') }}">
-=======
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Olhar Que Protege</title>
-    <link rel="stylesheet" href="{{ asset('assets/css/video.css') }}">
->>>>>>> 62241afbb44e03cf2a42d39162daa874ced8cad5
 </head>
 
 <body>
@@ -39,7 +32,6 @@
         </header>
 
         <main>
-<<<<<<< HEAD
 
             <section class="videos-section">
 
@@ -76,24 +68,6 @@
 
     <script src="{{ asset('assets/js/script.js') }}"></script>
 
-=======
-            <div class="conteudo-info">
-
-                <div class="espacoo"></div>
-
-                <div class="Info">
-                    <h1>Vídeos</h1>
-                </div>
-
-                <div class="AreaVd">
-                    <video id="meuVideo" src="{{ asset('assets/video/kjknjkn.mp4') }}" loop playsinline
-                        controls></video>
-                </div>
-
-            </div>
-        </main>
-    </div>
->>>>>>> 62241afbb44e03cf2a42d39162daa874ced8cad5
 </body>
 
 </html>
