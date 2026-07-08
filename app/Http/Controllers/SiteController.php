@@ -13,9 +13,7 @@ class SiteController extends Controller
         // ... seu código existente (ex: buscar posts) ...
 
         // Passa a variável como null por padrão para não dar erro no formulário de criação
-        return view('dashboard', [
-            'postEdicao' => null
-        ]);
+        return view('home');
     }
 
     public function sobre()
