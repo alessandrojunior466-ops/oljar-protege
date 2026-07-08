@@ -2,23 +2,23 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 
-class AppServiceProvider extends ServiceProvider
+class RouteServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * The path to your application's "home" route.
+     *
+     * Typically, users are redirected here after authentication.
+     *
+     * @var string
      */
-    public function register(): void
-    {
-        //
-    }
+    // ALTERE AQUI: Mude de '/' ou '/home' para a url do seu dashboard/painel
+    public const HOME = '/dashboard';
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        //
-    }
+    // ... o restante do arquivo permanece igual
 }
