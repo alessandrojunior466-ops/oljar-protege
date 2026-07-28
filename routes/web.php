@@ -2,11 +2,9 @@
 
 
 use Illuminate\Support\Facades\Route;
-=======
 use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\SiteController;
-use Illuminate\Support\Facades\Route;
 
 // Rotas Públicas do Site
 Route::get('/', [SiteController::class, 'index'])->name('home');
