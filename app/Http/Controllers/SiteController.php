@@ -3,49 +3,66 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// Alterado para apontar para o Model correto (Blog)
 use App\Models\Blog;
+use Illuminate\Support\Facades\Storage;
 
 class SiteController extends Controller
 {
-    public function index()
-    {
-        // ... seu código existente (ex: buscar posts) ...
+    // ... mantêm os outros métodos (index, sobre, etc) ...
 
-        // Passa a variável como null por padrão para não dar erro no formulário de criação
-        return view('home');
+    // 1. SALVAR NOVA PUBLICAÇÃO
+    public function store(Request $request)
+    {
+        $request->validate([
+            'titulo'   => 'required|string|max:255',
+            'conteudo' => 'required|string',
+            'imagem'   => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:4096', // até 4MB
+        ]);
+
+        $caminhoImagem = null;
+
+        // Se o usuário fez upload de imagem
+        if ($request->hasFile('imagem') && $request->file('imagem')->isValid()) {
+            // Salva na pasta 'storage/app/public/posts'
+            $caminhoImagem = $request->file('imagem')->store('posts', 'public');
+        }
+
+        Blog::create([
+            'titulo'   => $request->titulo,
+            'conteudo' => $request->conteudo,
+            'imagem'   => $caminhoImagem,
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Publicação criada com sucesso!');
     }
 
-    public function sobre()
+    // 2. ATUALIZAR PUBLICAÇÃO EXISTENTE
+    public function update(Request $request, $id)
     {
-        return view('sobre');
-    }
+        $request->validate([
+            'titulo'   => 'required|string|max:255',
+            'conteudo' => 'required|string',
+            'imagem'   => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:4096',
+        ]);
 
-    public function videos()
-    {
-        return view('videos');
-    }
+        $post = Blog::findOrFail($id);
 
-    public function blog()
-    {
-        // 1. Busca a publicação mais recente criada no dashboard para o topo (Destaque)
-        $destaque = Blog::latest()->first();
+        $post->titulo = $request->titulo;
+        $post->conteudo = $request->conteudo;
 
-        // 2. Busca TODAS as outras publicações menos a primeira (Destaque) para a grade abaixo
-        // O skip(1) pula o primeiro registro que já está no destaque
-        $restante = Blog::latest()->skip(1)->take(10)->get();
+        // Se enviou uma NOVA imagem ao editar
+        if ($request->hasFile('imagem') && $request->file('imagem')->isValid()) {
+            // Se já existia uma imagem antiga, remove do disco
+            if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
+                Storage::disk('public')->delete($post->imagem);
+            }
 
-        // 3. Passa ambas as variáveis para a view 'blog'
-        return view('blog', compact('destaque', 'restante'));
-    }
-    public function edit($id)
-    {
-        $postEdicao = Post::findOrFail($id);
+            // Salva a nova imagem
+            $post->imagem = $request->file('imagem')->store('posts', 'public');
+        }
 
-        return view('dashboard', compact('postEdicao'));
-    }
-    public function login()
-    {
-        return view('auth.login');
+        $post->save();
+
+        return redirect()->route('dashboard')->with('success', 'Publicação atualizada com sucesso!');
     }
 }

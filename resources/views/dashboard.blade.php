@@ -20,10 +20,6 @@
 
             <nav class="sidebar-menu">
                 <a href="{{ route('dashboard') }}" class="menu-item active">Dashboard</a>
-                {{-- 
-    <a href="#" class="menu-item">Usuários</a>
-    <a href="#" class="menu-item">Configurações</a> 
-    --}}
             </nav>
 
             <div class="sidebar-footer">
@@ -58,16 +54,19 @@
 
                 <div class="dashboard-grid">
 
-                    <!-- FORMULÁRIO DE NOVA PUBLICAÇÃO -->
-                    <!-- Bloco do Formulário Dinâmico (Criação / Edição) -->
+                    <!-- FORMULÁRIO DE PUBLICAÇÃO (CRIAÇÃO / EDIÇÃO) -->
                     <div class="welcome-card">
-                        <h2>{{ $postEdicao ? 'Editar Publicação' : 'Nova Publicação' }}</h2>
+                        <h2>{{ isset($postEdicao) && $postEdicao ? 'Editar Publicação' : 'Nova Publicação' }}</h2>
                         <p class="form-subtitle">Use este espaço para gerenciar o conteúdo do blog do projeto.</p>
 
-                        <form action="{{ route('blog') }}" method="POST" enctype="multipart/form-data">
+                        <!-- TAG FORM AJUSTADA DINAMICAMENTE -->
+                        <form action="{{ isset($postEdicao) && $postEdicao ? route('blog.update', $postEdicao->id) : route('blog.store') }}" 
+                              method="POST" 
+                              enctype="multipart/form-data">
                             @csrf
-                            @if ($postEdicao)
-                                <input type="hidden" name="id" value="{{ $postEdicao->id }}">
+                            
+                            @if (isset($postEdicao) && $postEdicao)
+                                @method('PUT')
                             @endif
 
                             <div class="form-group">
@@ -101,13 +100,14 @@
 
                             @if ($postEdicao)
                                 <a href="{{ route('dashboard') }}"
-                                    style="display: block; text-align: center; margin-top: 10px; color: #6b7280; font-size: 13px; text-decoration: none; font-weight: 600;">Cancelar
-                                    Edição</a>
+                                    style="display: block; text-align: center; margin-top: 10px; color: #6b7280; font-size: 13px; text-decoration: none; font-weight: 600;">
+                                    Cancelar Edição
+                                </a>
                             @endif
                         </form>
                     </div>
 
-                    <!-- Bloco de Listagem Lateral com Botões Editar e Excluir -->
+                    <!-- Bloco de Listagem Lateral -->
                     <div class="welcome-card">
                         <h2>Publicações Recentes</h2>
                         <p class="form-subtitle">Artigos atualmente salvos no seu banco de dados.</p>
@@ -131,8 +131,7 @@
                                     <!-- Botões de Ação -->
                                     <div class="post-actions"
                                         style="display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end;">
-                                        <a href="{{ route('dashboard', $post->id) }}"
-                                            class="btn-action-edit">Editar</a>
+                                        <a href="{{ route('dashboard.edit', $post->id) }}" class="btn-action-edit">Editar</a>
 
                                         <form action="{{ route('blog.delete', $post->id) }}" method="POST"
                                             onsubmit="return confirm('Tem certeza que deseja excluir esta publicação?');">
