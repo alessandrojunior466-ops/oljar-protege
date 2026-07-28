@@ -31,36 +31,34 @@
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
 
-                    <!-- Campo Email -->
-                    <div class="grupo-input">
+                    <div class="mt-4">
                         <label for="email">Email</label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                            autofocus autocomplete="username" />
+                            autofocus style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" />
                     </div>
 
-                    <!-- Campo Password -->
-                    <div class="grupo-input">
+                    <div class="mt-4">
                         <label for="password">Password</label>
-                        <input id="password" type="password" name="password" required
-                            autocomplete="current-password" />
+                        <input id="password" type="password" name="password" required autocomplete="current-password"
+                            style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" />
                     </div>
 
-                    <!-- Remember me -->
-                    <div class="lembrar-senha">
-                        <input id="remember_me" type="checkbox" name="remember">
-                        <label for="remember_me">Remember me</label>
+                    <div class="block mt-4">
+                        <label for="remember_me" class="inline-flex items-center">
+                            <input id="remember_me" type="checkbox" name="remember">
+                            <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                        </label>
                     </div>
 
-                    <!-- Ações -->
-                    <div class="acoes-login">
-                        @if (Route::has('password.request'))
-                            <a class="link-esqueceu" href="{{ route('password.request') }}">
-                                Forgot your password?
-                            </a>
-                        @endif
+                    <div class="flex items-center justify-end mt-4">
+                        <a href="{{ route('password.request') }}"
+                            style="margin-right: 15px; color: #666; text-decoration: none;">
+                            Forgot your password?
+                        </a>
 
-                        <button type="submit" class="btn-entrar">
-                            Log in
+                        <button type="submit"
+                            style="background-color: #0f172a; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                            LOG IN
                         </button>
                     </div>
                 </form>

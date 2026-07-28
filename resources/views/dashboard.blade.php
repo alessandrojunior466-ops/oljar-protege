@@ -64,7 +64,7 @@
                         <h2>{{ $postEdicao ? 'Editar Publicação' : 'Nova Publicação' }}</h2>
                         <p class="form-subtitle">Use este espaço para gerenciar o conteúdo do blog do projeto.</p>
 
-                        <form action="{{ route('blog.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('blog') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @if ($postEdicao)
                                 <input type="hidden" name="id" value="{{ $postEdicao->id }}">
