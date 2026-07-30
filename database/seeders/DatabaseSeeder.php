@@ -4,11 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
-
-use Database\Seeders\UsuarioSeeder;
-use Database\Seeders\BlogSeeder;
-use Database\Seeders\VideosSeeder;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,30 +14,37 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-   public function run(): void
-{
-    \App\Models\User::factory()->create([
-        'nome' => 'Alessandro',
-        'email' => 'alessandro@olharqueprotege.com',
-        'password' => \Illuminate\Support\Facades\Hash::make('alequeprotege709'),
-    ]);
+    public function run(): void
+    {
+        // 1. Criar os usuários administradores
+        User::factory()->create([
+            'nome' => 'Alessandro',
+            'email' => 'alessandro@olharqueprotege.com',
+            'password' => Hash::make('alequeprotege709'),
+        ]);
 
-    \App\Models\User::factory()->create([
-        'nome' => 'Ana',
-        'email' => 'ana@olharqueprotege.com',
-        'password' => \Illuminate\Support\Facades\Hash::make('anaqueprotege709'),
-    ]);
+        User::factory()->create([
+            'nome' => 'Ana',
+            'email' => 'ana@olharqueprotege.com',
+            'password' => Hash::make('anaqueprotege709'),
+        ]);
 
-    \App\Models\User::factory()->create([
-        'nome' => 'Felipe',
-        'email' => 'felipe@olharqueprotege.com',
-        'password' => \Illuminate\Support\Facades\Hash::make('fequeprotege709'),
-    ]);
+        User::factory()->create([
+            'nome' => 'Felipe',
+            'email' => 'felipe@olharqueprotege.com',
+            'password' => Hash::make('fequeprotege709'),
+        ]);
 
-    \App\Models\User::factory()->create([
-        'nome' => 'Luis',
-        'email' => 'luis@olharqueprotege.com',
-        'password' => \Illuminate\Support\Facades\Hash::make('luqueprotege709'),
-    ]);
-}
+        User::factory()->create([
+            'nome' => 'Luis',
+            'email' => 'luis@olharqueprotege.com',
+            'password' => Hash::make('luqueprotege709'),
+        ]);
+
+        // 2. Chamar os outros Seeders (Publicações e Vídeos)
+        $this->call([
+            BlogSeeder::class,
+            VideosSeeder::class,
+        ]);
+    }
 }
