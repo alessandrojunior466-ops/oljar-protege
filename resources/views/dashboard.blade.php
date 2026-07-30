@@ -24,7 +24,7 @@
 
             <div class="sidebar-footer">
                 <div class="user-info">
-                    <p class="user-name">{{ Auth::user()->nome }}</p>
+                    <p class="user-name">{{ Auth::user()->name ?? Auth::user()->nome }}</p>
                     <p class="user-email">{{ Auth::user()->email }}</p>
                 </div>
                 <div class="footer-actions">
@@ -82,7 +82,7 @@
                                 @if ($postEdicao && $postEdicao->imagem)
                                     <div style="margin-top: 10px;">
                                         <small>Imagem atual:</small><br>
-                                        <img src="{{ asset($postEdicao->imagem) }}" width="100"
+                                        <img src="{{ asset('storage/' . $postEdicao->imagem) }}" width="100"
                                             style="border-radius: 4px; margin-top: 5px;">
                                     </div>
                                 @endif
@@ -117,7 +117,7 @@
                                 <div class="post-item">
                                     <div style="display: flex; gap: 15px; align-items: start;">
                                         @if ($post->imagem)
-                                            <img src="{{ asset($post->imagem) }}" width="70" height="70"
+                                            <img src="{{ asset('storage/' . $post->imagem) }}" width="70" height="70"
                                                 style="object-fit: cover; border-radius: 6px; border: 1px solid #e5e7eb;">
                                         @endif
                                         <div style="flex-grow: 1;">
