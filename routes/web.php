@@ -10,6 +10,11 @@ Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
 Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
 Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
 
+// ROTA DE LOGIN (Corrige o erro Route [login] not defined)
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
 // Painel Protegido (Dashboard & Gerenciamento)
 Route::middleware(['auth'])->group(function () {
     // Tela principal do Dashboard
@@ -27,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Carrega as rotas de Autenticação (Login, Register, Logout, etc.)
+// Carrega as rotas adicionais de autenticação (Laravel Breeze / Fortify)
 if (file_exists(__DIR__ . '/auth.php')) {
     require __DIR__ . '/auth.php';
 }
