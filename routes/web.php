@@ -5,31 +5,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiteController;
 
 // Rotas Públicas do Site
-if (file_exists(__DIR__ . '/auth.php')) {
-    require __DIR__ . '/auth.php';
-}
-
-// Rotas Públicas
 Route::get('/', [SiteController::class, 'index'])->name('home');
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
 Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
 Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
 
-// ROTA DO LOGIN (Nomeada como 'login' para que o menu funcione)
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-// Carrega o resto das autenticações do auth.php (como o POST do login)
-if (file_exists(__DIR__ . '/auth.php')) {
-    require __DIR__ . '/auth.php';
-}
-
-// Painel Protegido (Dashboard)
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard'); // Altere para a sua view do painel se tiver outro nome
-    })->name('dashboard');
 // Painel Protegido (Dashboard & Gerenciamento)
 Route::middleware(['auth'])->group(function () {
     // Tela principal do Dashboard
@@ -46,3 +26,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Carrega as rotas de Autenticação (Login, Register, Logout, etc.)
+if (file_exists(__DIR__ . '/auth.php')) {
+    require __DIR__ . '/auth.php';
+}
