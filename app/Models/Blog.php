@@ -9,9 +9,12 @@ class Blog extends Model
 {
     use HasFactory;
 
-    // Ajuste esses campos de acordo com as colunas que estão na sua migration create_blogs_table.php (ex: titulo, conteudo, imagem)
+    // Nome da tabela se for diferente do padrão em inglês
+    protected $table = 'blogs'; 
+
     protected $fillable = [
         'titulo',
         'conteudo',
+        'imagem',
     ];
 }

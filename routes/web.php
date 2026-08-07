@@ -14,8 +14,7 @@ Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
 Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
 Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
 
-// ROTA DO LOGIN (Nomeada como 'login' para que o menu funcione!)
-// AGORA (manda direto para a tela de login nativa do Laravel)
+// ROTA DO LOGIN (Nomeada como 'login' para que o menu funcione)
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');

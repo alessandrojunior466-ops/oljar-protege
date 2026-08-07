@@ -59,7 +59,7 @@ class SiteController extends Controller
     public function dashboard()
     {
         $posts = Blog::latest()->get();
-        $publicacoes = $posts; // Passa $publicacoes para a linha 116 da view!
+        $publicacoes = $posts; // Passa $publicacoes para a listagem na view
         $postEdicao = null; 
 
         return view('dashboard', compact('posts', 'publicacoes', 'postEdicao'));
@@ -120,10 +120,12 @@ class SiteController extends Controller
         $post->conteudo = $request->conteudo;
 
         if ($request->hasFile('imagem') && $request->file('imagem')->isValid()) {
+            // Apaga a imagem antiga do disco se existir
             if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
                 Storage::disk('public')->delete($post->imagem);
             }
 
+            // Salva a nova imagem
             $post->imagem = $request->file('imagem')->store('posts', 'public');
         }
 
@@ -139,6 +141,7 @@ class SiteController extends Controller
     {
         $post = Blog::findOrFail($id);
 
+        // Remove a imagem associada antes de apagar o registro
         if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
             Storage::disk('public')->delete($post->imagem);
         }

@@ -52,6 +52,17 @@
                     </div>
                 @endif
 
+                <!-- Exibição de Erros de Validação -->
+                @if ($errors->any())
+                    <div class="alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <ul style="margin: 0; padding-left: 20px;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="dashboard-grid">
 
                     <!-- FORMULÁRIO DE PUBLICAÇÃO (CRIAÇÃO / EDIÇÃO) -->
@@ -59,7 +70,7 @@
                         <h2>{{ isset($postEdicao) && $postEdicao ? 'Editar Publicação' : 'Nova Publicação' }}</h2>
                         <p class="form-subtitle">Use este espaço para gerenciar o conteúdo do blog do projeto.</p>
 
-                        <!-- TAG FORM AJUSTADA DINAMICAMENTE -->
+                        <!-- FORMULÁRIO DINÂMICO -->
                         <form action="{{ isset($postEdicao) && $postEdicao ? route('blog.update', $postEdicao->id) : route('blog.store') }}" 
                               method="POST" 
                               enctype="multipart/form-data">
@@ -72,18 +83,18 @@
                             <div class="form-group">
                                 <label for="titulo">Título da Publicação</label>
                                 <input type="text" name="titulo" id="titulo"
-                                    value="{{ $postEdicao ? $postEdicao->titulo : '' }}" required
+                                    value="{{ old('titulo', $postEdicao ? $postEdicao->titulo : '') }}" required
                                     placeholder="Ex: A importância do diálogo aberto...">
                             </div>
 
                             <div class="form-group">
                                 <label for="imagem">Imagem da Publicação</label>
                                 <input type="file" name="imagem" id="imagem" accept="image/*">
-                                @if ($postEdicao && $postEdicao->imagem)
+                                @if (isset($postEdicao) && $postEdicao && $postEdicao->imagem)
                                     <div style="margin-top: 10px;">
                                         <small>Imagem atual:</small><br>
                                         <img src="{{ asset('storage/' . $postEdicao->imagem) }}" width="100"
-                                            style="border-radius: 4px; margin-top: 5px;">
+                                            style="border-radius: 4px; margin-top: 5px;" alt="Imagem do post">
                                     </div>
                                 @endif
                             </div>
@@ -91,14 +102,14 @@
                             <div class="form-group">
                                 <label for="conteudo">Conteúdo / Texto</label>
                                 <textarea name="conteudo" id="conteudo" rows="6" required
-                                    placeholder="Digite o conteúdo completo da sua publicação aqui...">{{ $postEdicao ? $postEdicao->conteudo : '' }}</textarea>
+                                    placeholder="Digite o conteúdo completo da sua publicação aqui...">{{ old('conteudo', $postEdicao ? $postEdicao->conteudo : '') }}</textarea>
                             </div>
 
                             <button type="submit" class="btn-submit">
-                                {{ $postEdicao ? 'Atualizar no Blog' : 'Publicar no Blog' }}
+                                {{ isset($postEdicao) && $postEdicao ? 'Atualizar no Blog' : 'Publicar no Blog' }}
                             </button>
 
-                            @if ($postEdicao)
+                            @if (isset($postEdicao) && $postEdicao)
                                 <a href="{{ route('dashboard') }}"
                                     style="display: block; text-align: center; margin-top: 10px; color: #6b7280; font-size: 13px; text-decoration: none; font-weight: 600;">
                                     Cancelar Edição
@@ -118,8 +129,14 @@
                                     <div style="display: flex; gap: 15px; align-items: start;">
                                         @if ($post->imagem)
                                             <img src="{{ asset('storage/' . $post->imagem) }}" width="70" height="70"
-                                                style="object-fit: cover; border-radius: 6px; border: 1px solid #e5e7eb;">
+                                                style="object-fit: cover; border-radius: 6px; border: 1px solid #e5e7eb;"
+                                                alt="{{ $post->titulo }}">
+                                        @else
+                                            <div style="width: 70px; height: 70px; background-color: #f3f4f6; border-radius: 6px; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px; text-align: center;">
+                                                Sem Imagem
+                                            </div>
                                         @endif
+
                                         <div style="flex-grow: 1;">
                                             <span class="post-date">Criado em:
                                                 {{ $post->created_at->format('d/m/Y H:i') }}</span>

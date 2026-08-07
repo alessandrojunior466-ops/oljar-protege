@@ -72,7 +72,7 @@
                             </span>
 
                             <h3>{{ $post->titulo }}</h3>
-                            <p>{{ $post->conteudo }}</p>
+                            <p>{{ Str::limit($post->conteudo, 120) }}</p>
 
                             <div class="tags-container">
                                 <span class="tag-circular">LEITURA</span>

@@ -3,46 +3,29 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Blog;
 
 class BlogSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        DB::table('categorias')->insert([
-            [
-                "nome" => "Programação",
-                "cor" => "#3B52F6",
-                "created_at" => now(),
-                "updated_at" => now(),
-            ],
-            [
-                "nome" => "Inteligência Artificial",
-                "cor" => "#8B5CF6",
-                "created_at" => now(),
-                "updated_at" => now(),
-            ],
-            [
-                "nome" => "Hardware",
-                "cor" => "#10B981",
-                "created_at" => now(),
-                "updated_at" => now(),
-            ],
-            [
-                "nome" => "Cloud Computing",
-                "cor" => "#F59E0B",
-                "created_at" => now(),
-                "updated_at" => now(),
-            ],
-            [
-                "nome" => "Cyber Segurança", // Ajustado o erro de digitação de "Cyper" para "Cyber"
-                "cor" => "#EF4444",
-                "created_at" => now(),
-                "updated_at" => now(),
-            ],
+        // Insira os posts que você quer cadastrar
+        Blog::create([
+            'titulo'   => 'A Importância da Proteção Infantil',
+            'conteudo' => 'Texto detalhado sobre a importância de proteger as crianças e criar um ambiente seguro...',
+            'imagem'   => null,
+        ]);
+
+        Blog::create([
+            'titulo'   => 'Como Identificar Sinais de Alerta',
+            'conteudo' => 'Texto sobre como perceber comportamentos e prevenir situações de risco...',
+            'imagem'   => null,
+        ]);
+
+        Blog::create([
+            'titulo'   => 'O Papel da Comunidade na Segurança',
+            'conteudo' => 'Texto explicando como toda a sociedade pode contribuir no projeto Olhar Que Protege...',
+            'imagem'   => null,
         ]);
     }
 }
