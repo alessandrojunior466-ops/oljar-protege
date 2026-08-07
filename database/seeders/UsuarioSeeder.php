@@ -26,6 +26,14 @@ class UsuarioSeeder extends Seeder
                 "updated_at" => now(),
             ],
             [
+                "nome" => "Alessandro",
+                "email" => "alessandro22@gmail.com",
+                "perfil" => "admnistrador",
+                "password" => Hash::make("12345678"),
+                "created_at" => now(),
+                "updated_at" => now(),
+            ],
+            [
                 "nome" => "Eduardo Henrique",
                 "email" => "eduardohenrique@gmail.com",
                 "perfil" => "editor",
