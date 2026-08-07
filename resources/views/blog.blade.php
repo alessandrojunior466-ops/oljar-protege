@@ -27,7 +27,6 @@
         </header>
 
         <!-- CONTEÚDO PRINCIPAL -->
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="container-blog">
 
             <!-- Empurra o conteúdo para baixo do menu fixo -->
@@ -39,8 +38,8 @@
                 <!-- Post em Destaque Dinâmico (Sempre a primeira publicação do banco) -->
                 <div class="card-post-grande">
                     <div class="imagem-post">
-                        <!-- Imagem do banco ou padrão se estiver vazia -->
-                        <img src="{{ $destaque->imagem ? asset($destaque->imagem) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop' }}"
+                        <!-- Imagem do banco (com prefixo storage/) ou padrão se estiver vazia -->
+                        <img src="{{ $destaque->imagem ? asset('storage/' . $destaque->imagem) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop' }}"
                             alt="{{ $destaque->titulo }}">
                     </div>
                     <div class="conteudo-post">
@@ -63,7 +62,7 @@
                     <!-- Card de Post Individual -->
                     <div class="card-post-pequeno">
                         @if ($post->imagem)
-                            <img src="{{ asset($post->imagem) }}" alt="{{ $post->titulo }}"
+                            <img src="{{ asset('storage/' . $post->imagem) }}" alt="{{ $post->titulo }}"
                                 style="width: 100%; height: 180px; object-fit: cover;">
                         @endif
                         <div class="conteudo-post-pequeno">
