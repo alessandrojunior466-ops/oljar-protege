@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Storage;
 
 class SiteController extends Controller
 {
+    public function index()
+    {
+        // ... seu código existente (ex: buscar posts) ...
+
+        // Passa a variável como null por padrão para não dar erro no formulário de criação
+        return view('home');
     /**
      * 1. PÁGINA INICIAL (HOME)
      */
@@ -38,6 +44,8 @@ class SiteController extends Controller
      */
     public function blog()
     {
+        // 1. Busca a publicação mais recente criada no dashboard para o topo (Destaque)
+        $destaque = Blog::latest()->first();
         $posts = Blog::latest()->get();
         $destaque = $posts->first(); 
         $restante = $posts->skip(1); 
@@ -45,6 +53,8 @@ class SiteController extends Controller
         return view('blog', compact('destaque', 'restante', 'posts'));
     }
 
+        return view('dashboard', compact('postEdicao'));
+    }
     /**
      * 5. PÁGINA DE LOGIN
      */

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiteController;
 
+// Rotas Públicas do Site
 if (file_exists(__DIR__ . '/auth.php')) {
     require __DIR__ . '/auth.php';
 }
@@ -19,6 +20,16 @@ Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
+// Carrega o resto das autenticações do auth.php (como o POST do login)
+if (file_exists(__DIR__ . '/auth.php')) {
+    require __DIR__ . '/auth.php';
+}
+
+// Painel Protegido (Dashboard)
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard'); // Altere para a sua view do painel se tiver outro nome
+    })->name('dashboard');
 // Painel Protegido (Dashboard & Gerenciamento)
 Route::middleware(['auth'])->group(function () {
     // Tela principal do Dashboard
