@@ -8,18 +8,12 @@ use Illuminate\Support\Facades\Storage;
 
 class SiteController extends Controller
 {
-    public function index()
-    {
-        // ... seu código existente (ex: buscar posts) ...
-
-        // Passa a variável como null por padrão para não dar erro no formulário de criação
-        return view('home');
     /**
      * 1. PÁGINA INICIAL (HOME)
      */
     public function index()
     {
-        $posts = Blog::latest()->get(); 
+        $posts = Blog::latest()->get();
         return view('home', compact('posts'));
     }
 
@@ -32,7 +26,7 @@ class SiteController extends Controller
     }
 
     /**
-     * 3. PÁGINA VÍDEOS
+     * 3. PÁGINA DE VÍDEOS
      */
     public function videos()
     {
@@ -40,118 +34,96 @@ class SiteController extends Controller
     }
 
     /**
-     * 4. PÁGINA BLOG
+     * 4. PÁGINA DO BLOG
      */
     public function blog()
     {
-        // 1. Busca a publicação mais recente criada no dashboard para o topo (Destaque)
-        $destaque = Blog::latest()->first();
         $posts = Blog::latest()->get();
-        $destaque = $posts->first(); 
-        $restante = $posts->skip(1); 
-
-        return view('blog', compact('destaque', 'restante', 'posts'));
-    }
-
-        return view('dashboard', compact('postEdicao'));
-    }
-    /**
-     * 5. PÁGINA DE LOGIN
-     */
-    public function login()
-    {
-        return view('auth.login');
+        return view('blog', compact('posts'));
     }
 
     /**
-     * 6. DASHBOARD (PAINEL ADMINISTRATIVO)
+     * 5. DASHBOARD (PAINEL)
      */
     public function dashboard()
     {
-        $posts = Blog::latest()->get();
-        $publicacoes = $posts; // Passa $publicacoes para a listagem na view
-        $postEdicao = null; 
+        $publicacoes = Blog::latest()->get();
+        $postEdicao = null;
 
-        return view('dashboard', compact('posts', 'publicacoes', 'postEdicao'));
+        return view('dashboard', compact('publicacoes', 'postEdicao'));
     }
 
     /**
-     * 7. SALVAR NOVA PUBLICAÇÃO (STORE)
+     * 6. SALVAR NOVA PUBLICAÇÃO (STORE)
      */
     public function store(Request $request)
     {
         $request->validate([
-            'titulo'   => 'required|string|max:255',
+            'titulo' => 'required|string|max:255',
             'conteudo' => 'required|string',
-            'imagem'   => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:4096',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $caminhoImagem = null;
 
-        if ($request->hasFile('imagem') && $request->file('imagem')->isValid()) {
+        if ($request->hasFile('imagem')) {
             $caminhoImagem = $request->file('imagem')->store('posts', 'public');
         }
 
         Blog::create([
-            'titulo'   => $request->titulo,
+            'titulo' => $request->titulo,
             'conteudo' => $request->conteudo,
-            'imagem'   => $caminhoImagem,
+            'imagem' => $caminhoImagem,
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Publicação criada com sucesso!');
     }
 
     /**
-     * 8. EDITAR PUBLICAÇÃO (EDIT)
+     * 7. CARREGAR PUBLICAÇÃO PARA EDIÇÃO (EDIT)
      */
     public function edit($id)
     {
-        $posts = Blog::latest()->get();
-        $publicacoes = $posts;
-        $postEdicao = Blog::findOrFail($id); 
+        $publicacoes = Blog::latest()->get();
+        $postEdicao = Blog::findOrFail($id);
 
-        return view('dashboard', compact('posts', 'publicacoes', 'postEdicao'));
+        return view('dashboard', compact('publicacoes', 'postEdicao'));
     }
 
     /**
-     * 9. ATUALIZAR PUBLICAÇÃO EXISTENTE (UPDATE)
+     * 8. ATUALIZAR PUBLICAÇÃO (UPDATE)
      */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'titulo'   => 'required|string|max:255',
+            'titulo' => 'required|string|max:255',
             'conteudo' => 'required|string',
-            'imagem'   => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:4096',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $post = Blog::findOrFail($id);
 
-        $post->titulo = $request->titulo;
-        $post->conteudo = $request->conteudo;
-
-        if ($request->hasFile('imagem') && $request->file('imagem')->isValid()) {
-            // Apaga a imagem antiga do disco se existir
+        if ($request->hasFile('imagem')) {
             if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
                 Storage::disk('public')->delete($post->imagem);
             }
-
-            // Salva a nova imagem
             $post->imagem = $request->file('imagem')->store('posts', 'public');
         }
 
+        $post->titulo = $request->titulo;
+        $post->conteudo = $request->conteudo;
         $post->save();
 
         return redirect()->route('dashboard')->with('success', 'Publicação atualizada com sucesso!');
     }
 
     /**
-     * 10. EXCLUIR PUBLICAÇÃO (DESTROY)
+     * 9. EXCLUIR PUBLICAÇÃO (DESTROY)
      */
     public function destroy($id)
     {
         $post = Blog::findOrFail($id);
 
-        // Remove a imagem associada antes de apagar o registro
         if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
             Storage::disk('public')->delete($post->imagem);
         }
