@@ -34,7 +34,11 @@
 
             <h1 class="titulo-blog">BLOG</h1>
 
-            @if ($destaque)
+            @php
+    $destaque = $posts->first();
+@endphp
+
+@if ($destaque)
                 <!-- Post em Destaque Dinâmico (Sempre a primeira publicação do banco) -->
                 <div class="card-post-grande">
                     <div class="imagem-post">
@@ -58,7 +62,7 @@
 
             <!-- Grade de Posts Menores -->
             <div class="grade-posts">
-                @forelse($restante as $post)
+                @forelse($posts->skip(1) as $post)
                     <!-- Card de Post Individual -->
                     <div class="card-post-pequeno">
                         @if ($post->imagem)

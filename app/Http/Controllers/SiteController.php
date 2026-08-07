@@ -36,10 +36,24 @@ class SiteController extends Controller
     /**
      * 4. PÁGINA DO BLOG
      */
+   /**
+     * 4. PÁGINA DO BLOG
+     */
+    /**
+     * 4. PÁGINA DO BLOG
+     */
     public function blog()
     {
+        // Busca todas as publicações em ordem decrescente
         $posts = Blog::latest()->get();
-        return view('blog', compact('posts'));
+
+        // O primeiro post vai para o destaque
+        $destaque = $posts->first();
+
+        // Pega do segundo post em diante para a grade (pula o primeiro)
+        $restante = $posts->skip(1);
+
+        return view('blog', compact('destaque', 'restante', 'posts'));
     }
 
     /**
