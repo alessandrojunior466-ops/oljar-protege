@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Blog;
 use App\Models\Video;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class SiteController extends Controller
 {
@@ -14,7 +15,7 @@ class SiteController extends Controller
      */
     public function index()
     {
-        $posts = Blog::latest()->get();
+        $posts = Blog::with('autor')->latest()->get();
         return view('home', compact('posts'));
     }
 
@@ -31,7 +32,7 @@ class SiteController extends Controller
      */
     public function videos()
     {
-        $videos = Video::latest()->get();
+        $videos = Video::with('autor')->latest()->get();
         return view('videos', compact('videos'));
     }
 
@@ -40,7 +41,7 @@ class SiteController extends Controller
      */
     public function blog()
     {
-        $posts = Blog::latest()->get();
+        $posts = Blog::with('autor')->latest()->get();
         $destaque = $posts->first();
         $restante = $posts->skip(1);
 
@@ -52,7 +53,7 @@ class SiteController extends Controller
      */
     public function blogShow($id)
     {
-        $post = Blog::findOrFail($id);
+        $post = Blog::with('autor')->findOrFail($id);
         return view('blog-show', compact('post'));
     }
 
@@ -61,7 +62,7 @@ class SiteController extends Controller
      */
     public function dashboard()
     {
-        $publicacoes = Blog::latest()->get();
+        $publicacoes = Blog::with('autor')->latest()->get();
         $postEdicao = null;
 
         return view('dashboard', compact('publicacoes', 'postEdicao'));
@@ -72,8 +73,10 @@ class SiteController extends Controller
      */
     public function dashboardVideos()
     {
-        $videos = Video::latest()->get();
-        return view('dashboard-videos', compact('videos'));
+        $videos = Video::with('autor')->latest()->get();
+        $videoEdicao = null;
+
+        return view('dashboard-videos', compact('videos', 'videoEdicao'));
     }
 
     /**
@@ -97,6 +100,7 @@ class SiteController extends Controller
             'titulo' => $request->titulo,
             'conteudo' => $request->conteudo,
             'imagem' => $caminhoImagem,
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Publicação criada com sucesso!');
@@ -107,7 +111,7 @@ class SiteController extends Controller
      */
     public function edit($id)
     {
-        $publicacoes = Blog::latest()->get();
+        $publicacoes = Blog::with('autor')->latest()->get();
         $postEdicao = Blog::findOrFail($id);
 
         return view('dashboard', compact('publicacoes', 'postEdicao'));
@@ -164,7 +168,7 @@ class SiteController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:255',
             'descricao' => 'required|string',
-            'video' => 'required|file|mimes:mp4,mov,avi|max:50000',
+            'video' => 'required|file|mimes:mp4,mov,avi|max:102400',
         ]);
 
         $caminhoVideo = null;
@@ -177,9 +181,48 @@ class SiteController extends Controller
             'titulo' => $request->titulo,
             'descricao' => $request->descricao,
             'arquivo' => $caminhoVideo,
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()->route('dashboard.videos')->with('success', 'Vídeo enviado com sucesso!');
+    }
+
+    /**
+     * 10.1 CARREGAR VÍDEO PARA EDIÇÃO
+     */
+    public function videoEdit($id)
+    {
+        $videos = Video::with('autor')->latest()->get();
+        $videoEdicao = Video::findOrFail($id);
+
+        return view('dashboard-videos', compact('videos', 'videoEdicao'));
+    }
+
+    /**
+     * 10.2 ATUALIZAR VÍDEO
+     */
+    public function videoUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'video' => 'nullable|file|mimes:mp4,mov,avi|max:102400',
+        ]);
+
+        $video = Video::findOrFail($id);
+
+        if ($request->hasFile('video')) {
+            if ($video->arquivo && Storage::disk('public')->exists($video->arquivo)) {
+                Storage::disk('public')->delete($video->arquivo);
+            }
+            $video->arquivo = $request->file('video')->store('videos', 'public');
+        }
+
+        $video->titulo = $request->titulo;
+        $video->descricao = $request->descricao;
+        $video->save();
+
+        return redirect()->route('dashboard.videos')->with('success', 'Vídeo atualizado com sucesso!');
     }
 
     /**

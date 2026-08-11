@@ -32,8 +32,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Rotas de Gerenciamento de Vídeos
     Route::get('/dashboard/videos', [SiteController::class, 'dashboardVideos'])->name('dashboard.videos');
-    Route::post('/dashboard/videos/store', [SiteController::class, 'videoStore'])->name('video.store');
-    Route::delete('/dashboard/videos/delete/{id}', [SiteController::class, 'videoDestroy'])->name('video.delete');
+Route::post('/dashboard/videos', [SiteController::class, 'videoStore'])->name('dashboard.videos.store');
+Route::get('/dashboard/videos/edit/{id}', [SiteController::class, 'videoEdit'])->name('dashboard.videos.edit');
+Route::put('/dashboard/videos/update/{id}', [SiteController::class, 'videoUpdate'])->name('dashboard.videos.update');
+Route::delete('/dashboard/videos/{id}', [SiteController::class, 'videoDestroy'])->name('dashboard.videos.destroy');
 
     // Rotas de Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
