@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Blog;
+use App\Models\Video;
 use Illuminate\Support\Facades\Storage;
 
 class SiteController extends Controller
@@ -30,7 +31,8 @@ class SiteController extends Controller
      */
     public function videos()
     {
-        return view('videos');
+        $videos = Video::latest()->get();
+        return view('videos', compact('videos'));
     }
 
     /**
@@ -70,7 +72,8 @@ class SiteController extends Controller
      */
     public function dashboardVideos()
     {
-        return view('dashboard-videos');
+        $videos = Video::latest()->get();
+        return view('dashboard-videos', compact('videos'));
     }
 
     /**
@@ -160,10 +163,21 @@ class SiteController extends Controller
     {
         $request->validate([
             'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string',
             'video' => 'required|file|mimes:mp4,mov,avi|max:50000',
         ]);
 
-        // Lógica de upload do arquivo ou salvamento no banco de dados aqui...
+        $caminhoVideo = null;
+
+        if ($request->hasFile('video')) {
+            $caminhoVideo = $request->file('video')->store('videos', 'public');
+        }
+
+        Video::create([
+            'titulo' => $request->titulo,
+            'descricao' => $request->descricao,
+            'arquivo' => $caminhoVideo,
+        ]);
 
         return redirect()->route('dashboard.videos')->with('success', 'Vídeo enviado com sucesso!');
     }
@@ -173,7 +187,13 @@ class SiteController extends Controller
      */
     public function videoDestroy($id)
     {
-        // Lógica de exclusão do vídeo aqui...
+        $video = Video::findOrFail($id);
+
+        if ($video->arquivo && Storage::disk('public')->exists($video->arquivo)) {
+            Storage::disk('public')->delete($video->arquivo);
+        }
+
+        $video->delete();
 
         return redirect()->route('dashboard.videos')->with('success', 'Vídeo excluído com sucesso!');
     }

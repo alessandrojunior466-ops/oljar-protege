@@ -66,55 +66,61 @@
                 <div class="dashboard-grid">
 
                     <!-- FORMULÁRIO DE ENVIO DE VÍDEO -->
-                    <div class="welcome-card">
-                        <h2>Novo Vídeo</h2>
-                        <p class="form-subtitle">Envie vídeos educativos e treinamentos para a plataforma.</p>
+<div class="welcome-card">
+    <h2>Novo Vídeo</h2>
+    <p class="form-subtitle">Envie vídeos educativos e treinamentos para a plataforma.</p>
 
-                        <form action="{{ route('video.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
+    <form action="{{ route('video.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
 
-                            <div class="form-group">
-                                <label for="titulo">Título do Vídeo</label>
-                                <input type="text" name="titulo" id="titulo" required placeholder="Ex: Treinamento de Segurança Digital">
-                            </div>
+        <div class="form-group">
+            <label for="titulo">Título do Vídeo</label>
+            <input type="text" name="titulo" id="titulo" required placeholder="Ex: Treinamento de Segurança Digital">
+        </div>
 
-                            <div class="form-group">
-                                <label for="video">Arquivo de Vídeo (MP4, MOV, AVI)</label>
-                                <input type="file" name="video" id="video" accept="video/*" required>
-                            </div>
+        <div class="form-group">
+            <label for="descricao">Descrição do Vídeo</label>
+            <textarea name="descricao" id="descricao" rows="4" required placeholder="Digite uma breve descrição do vídeo..."></textarea>
+        </div>
 
-                            <button type="submit" class="btn-submit">
-                                Enviar Vídeo
-                            </button>
-                        </form>
-                    </div>
+        <div class="form-group">
+            <label for="video">Arquivo de Vídeo (MP4, MOV, AVI)</label>
+            <input type="file" name="video" id="video" accept="video/*" required>
+        </div>
 
-                    <!-- LISTAGEM DE VÍDEOS -->
-                    <div class="welcome-card">
-                        <h2>Vídeos Cadastrados</h2>
-                        <p class="form-subtitle">Vídeos atualmente exibidos na área pública.</p>
+        <button type="submit" class="btn-submit">
+            Enviar Vídeo
+        </button>
+    </form>
+</div>
 
-                        <div class="posts-list">
-                            @forelse($videos ?? [] as $video)
-                                <div class="post-item" style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <h3>{{ $video->titulo }}</h3>
-                                        <span class="post-date">Enviado em: {{ $video->created_at->format('d/m/Y H:i') }}</span>
-                                    </div>
+<!-- LISTAGEM DE VÍDEOS -->
+<div class="welcome-card">
+    <h2>Vídeos Cadastrados</h2>
+    <p class="form-subtitle">Vídeos atualmente exibidos na área pública.</p>
 
-                                    <form action="{{ route('video.delete', $video->id) }}" method="POST" onsubmit="return confirm('Excluir este vídeo?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-action-delete">Excluir</button>
-                                    </form>
-                                </div>
-                            @empty
-                                <div class="empty-state">
-                                    <p>Nenhum vídeo cadastrado no momento.</p>
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
+    <div class="posts-list">
+        @forelse($videos as $video)
+            <div class="post-item" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
+                <div>
+                    <h3>{{ $video->titulo }}</h3>
+                    <p style="color: #4b5563; font-size: 14px; margin: 5px 0;">{{ $video->descricao }}</p>
+                    <span class="post-date">Enviado em: {{ $video->created_at->format('d/m/Y H:i') }}</span>
+                </div>
+
+                <form action="{{ route('video.delete', $video->id) }}" method="POST" onsubmit="return confirm('Excluir este vídeo?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-action-delete">Excluir</button>
+                </form>
+            </div>
+        @empty
+            <div class="empty-state">
+                <p>Nenhum vídeo cadastrado no momento.</p>
+            </div>
+        @endforelse
+    </div>
+</div>
 
                 </div>
             </section>
