@@ -26,7 +26,7 @@ class SiteController extends Controller
     }
 
     /**
-     * 3. PÁGINA DE VÍDEOS
+     * 3. PÁGINA DE VÍDEOS (PÚBLICA)
      */
     public function videos()
     {
@@ -55,7 +55,7 @@ class SiteController extends Controller
     }
 
     /**
-     * 5. DASHBOARD (PAINEL)
+     * 5. DASHBOARD - GERENCIAR BLOG
      */
     public function dashboard()
     {
@@ -63,6 +63,14 @@ class SiteController extends Controller
         $postEdicao = null;
 
         return view('dashboard', compact('publicacoes', 'postEdicao'));
+    }
+
+    /**
+     * 5.1 DASHBOARD - GERENCIAR VÍDEOS
+     */
+    public function dashboardVideos()
+    {
+        return view('dashboard-videos');
     }
 
     /**
@@ -143,5 +151,30 @@ class SiteController extends Controller
         $post->delete();
 
         return redirect()->route('dashboard')->with('success', 'Publicação excluída com sucesso!');
+    }
+
+    /**
+     * 10. SALVAR NOVO VÍDEO (VIDEO STORE)
+     */
+    public function videoStore(Request $request)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'video' => 'required|file|mimes:mp4,mov,avi|max:50000',
+        ]);
+
+        // Lógica de upload do arquivo ou salvamento no banco de dados aqui...
+
+        return redirect()->route('dashboard.videos')->with('success', 'Vídeo enviado com sucesso!');
+    }
+
+    /**
+     * 11. EXCLUIR VÍDEO (VIDEO DESTROY)
+     */
+    public function videoDestroy($id)
+    {
+        // Lógica de exclusão do vídeo aqui...
+
+        return redirect()->route('dashboard.videos')->with('success', 'Vídeo excluído com sucesso!');
     }
 }

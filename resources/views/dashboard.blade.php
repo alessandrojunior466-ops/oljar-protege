@@ -19,7 +19,8 @@
             </div>
 
             <nav class="sidebar-menu">
-                <a href="{{ route('dashboard') }}" class="menu-item active">Dashboard</a>
+                <a href="{{ url('/dashboard/blog') }}" class="menu-item {{ request()->is('dashboard/blog*') ? 'active' : '' }}">Blog</a>
+                <a href="{{ url('/dashboard/videos') }}" class="menu-item {{ request()->is('dashboard/videos*') ? 'active' : '' }}">Vídeos</a>
             </nav>
 
             <div class="sidebar-footer">

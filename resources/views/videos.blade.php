@@ -44,19 +44,26 @@
 
                 <div class="videos-grid">
 
-                    @for ($i = 1; $i <= 9; $i++)
+                    @forelse ($videos ?? [] as $video)
                         <div class="video-card">
-
-                            <div class="play-icon">
-                                ▶
-                            </div>
-
-                            <h3>Vídeo {{ $i }}</h3>
-
-                            <span>Em breve</span>
-
+                            <video controls width="100%" style="border-radius: 12px; max-height: 200px;">
+                                <source src="{{ asset('storage/' . $video->caminho) }}" type="video/mp4">
+                                Seu navegador não suporta a exibição deste vídeo.
+                            </video>
+                            <h3 style="margin-top: 10px;">{{ $video->titulo }}</h3>
                         </div>
-                    @endfor
+                    @empty
+                        {{-- Exibição de cards fictícios caso não haja vídeos salvos no banco ainda --}}
+                        @for ($i = 1; $i <= 6; $i++)
+                            <div class="video-card">
+                                <div class="play-icon">
+                                    ▶
+                                </div>
+                                <h3>Vídeo {{ $i }}</h3>
+                                <span>Em breve</span>
+                            </div>
+                        @endfor
+                    @endforelse
 
                 </div>
 

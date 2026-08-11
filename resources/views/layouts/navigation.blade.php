@@ -12,8 +12,14 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <!-- Link para o Blog -->
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                        {{ __('Blog') }}
+                    </x-nav-link>
+
+                    <!-- Link para Vídeos -->
+                    <x-nav-link :href="url('/videos')" :active="request()->is('videos*')">
+                        {{ __('Vídeos') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -67,8 +73,14 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            <!-- Link Responsivo para o Blog -->
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+                {{ __('Blog') }}
+            </x-responsive-nav-link>
+
+            <!-- Link Responsivo para Vídeos -->
+            <x-responsive-nav-link :href="url('/videos')" :active="request()->is('videos*')">
+                {{ __('Vídeos') }}
             </x-responsive-nav-link>
         </div>
 
