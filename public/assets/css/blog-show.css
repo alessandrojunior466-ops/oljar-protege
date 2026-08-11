@@ -1,0 +1,277 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #B4B9E6 !important; /* Tom lavanda suave de fundo */
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- HEADER / CABEÇALHO FIXO ORIGINAL INTEGRADO --- */
+header {
+    height: 180px;
+}
+
+.cabecalho {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    z-index: 100;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff3e4;
+    border-radius: 12px;
+    padding: 15px 30px;
+    margin-top: 30px;
+    max-width: 1400px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.cabecalho nav {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.cabecalho nav a {
+    text-decoration: none;
+    color: #000 !important;
+    font-weight: 700 !important; 
+    font-size: 20px !important;  
+    transition: color 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.cabecalho nav a:hover {
+    color: rgb(91, 133, 189) !important;
+}
+
+/* --- ESPAÇAMENTO DO CONTEÚDO --- */
+.espacoo {
+    height: 50px;
+}
+
+/* --- CONTEÚDO DO BLOG --- */
+.container-blog {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 10px 0;
+}
+
+.titulo-blog {
+    text-align: center;
+    color: #241468;
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin: 20px 0 10px 0;
+}
+
+/* Links sem formatação padrão */
+.post-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+/* Card Destaque (Grande) */
+.card-post-grande {
+    display: flex;
+    background-color: #CBD0F7; /* Lavanda médio */
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+}
+
+.card-post-grande .imagem-post {
+    flex: 1;
+    min-height: 350px;
+}
+
+.card-post-grande .imagem-post img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-post-grande .conteudo-post {
+    flex: 1.2;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #1A0E46;
+}
+
+.card-post-grande h2 {
+    font-size: 1.8rem;
+    margin-top: 0;
+    line-height: 1.3;
+}
+
+.destaque-roxo {
+    color: #5B259F;
+    font-weight: 800;
+}
+
+/* Grade de Posts Menores */
+.grade-posts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.card-post-pequeno {
+    background-color: #CBD0F7;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-post-pequeno img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.conteudo-post-pequeno {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #1A0E46;
+}
+
+.card-post-pequeno h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    line-height: 1.4;
+}
+
+/* Tags Circulares Customizadas */
+.tags-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.tag-circular {
+    background-color: #fff3e4;
+    color: #241468;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* --- DETALHE DO POST (PÁGINA INDIVIDUAL) --- */
+.detalhe-post {
+    background-color: #CBD0F7; /* Fundo em lavanda médio harmonizado com o restante do site */
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+    margin-top: 20px;
+    border: none;
+}
+
+.btn-voltar {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    width: fit-content !important; /* Impede que o botão ocupe a largura toda */
+    margin-bottom: 20px;
+    color: #241468;
+    background-color: #fff3e4; /* Bege do cabeçalho */
+    padding: 10px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-voltar:hover {
+    background-color: #241468;
+    color: #ffffff;
+    transform: translateX(-3px);
+}
+.imagem-detalhe {
+    width: 100%;
+    max-height: 450px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin: 25px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.conteudo-texto {
+    line-height: 1.85;
+    color: #1A0E46; /* Texto escuro de alto contraste */
+    font-size: 1.125rem;
+    white-space: pre-line;
+}
+
+.detalhe-post h1 {
+    font-size: 2.2rem;
+    color: #241468;
+    font-weight: 800;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    line-height: 1.3;
+}
+
+.detalhe-post .post-date {
+    font-size: 13px;
+    color: #5B259F;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    header {
+        height: auto;
+    }
+    .cabecalho {
+        position: relative;
+        width: 100%;
+        margin-top: 15px;
+        flex-direction: column;
+        gap: 20px;
+        left: 0;
+        transform: none;
+    }
+    .cabecalho nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+    .card-post-grande {
+        flex-direction: column;
+    }
+    .grade-posts {
+        grid-template-columns: 1fr;
+    }
+}
