@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('luqueprotege709'),
         ]);
 
-        // 2. Chamar os outros Seeders (Publicações e Vídeos)
+        // 2. Chamar os outros Seeders (Publicações do Blog e Vídeos)
         $this->call([
             BlogSeeder::class,
             VideosSeeder::class,
