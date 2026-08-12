@@ -13,36 +13,33 @@ class BlogSeeder extends Seeder
         // 1. Busca os arquivos da pasta 'posts'
         $images = Storage::disk('public')->files('posts');
         
-        // 2. Garante que as imagens sejam lidas na mesma ordem alfabética do VSCode (h, o, w)
+        // 2. Mantém a mesma ordem visual que você vê no seu VSCode (H, O, W)
         sort($images, SORT_NATURAL | SORT_FLAG_CASE);
 
-        // 3. A Importância da Proteção Infantil (No TOPO da lista)
-        // Você pediu que essa fosse a terceira imagem
+        // PRIMEIRA POSTAGEM (No topo do painel) -> Recebe a ÚLTIMA thumb [2]
         Blog::create([
             'titulo'     => 'A Importância da Proteção Infantil',
             'conteudo'   => 'Texto detalhado sobre a importância de proteger as crianças e criar um ambiente seguro...',
-            'imagem'     => $images[2] ?? null, // Pega a 3ª imagem da pasta
+            'imagem'     => $images[2] ?? null, // 3ª imagem da pasta (W1xdc...)
             'created_at' => now(), 
         ]);
 
-        // 4. Como Identificar Sinais de Alerta (No MEIO da lista)
-        // Você pediu que essa fosse a primeira imagem
+        // SEGUNDA POSTAGEM (No meio do painel) -> Recebe a SEGUNDA thumb [1]
         Blog::create([
             'titulo'     => 'Como Identificar Sinais de Alerta',
             'conteudo'   => 'Texto sobre como perceber comportamentos e prevenir situações de risco...',
-            'imagem'     => $images[0] ?? null, // Pega a 1ª imagem da pasta
+            'imagem'     => $images[1] ?? null, // 2ª imagem da pasta (odyl1...)
             'created_at' => now()->subDays(1), 
         ]);
 
-        // 5. O Papel da Comunidade na Segurança (No FINAL da lista)
-        // Você pediu que essa fosse a segunda imagem
+        // ÚLTIMA POSTAGEM (No final do painel) -> Recebe a PRIMEIRA thumb [0]
         Blog::create([
             'titulo'     => 'O Papel da Comunidade na Segurança',
             'conteudo'   => 'Texto explicando como toda a sociedade pode contribuir no projeto Olhar Que Protege...',
-            'imagem'     => $images[1] ?? null, // Pega a 2ª imagem da pasta
+            'imagem'     => $images[0] ?? null, // 1ª imagem da pasta (huBkn...)
             'created_at' => now()->subDays(2), 
         ]);
         
-        $this->command->info('BlogSeeder executado: Imagens exatas amarradas a cada postagem!');
+        $this->command->info('BlogSeeder executado: Imagens reordenadas (Última na primeira, etc)!');
     }
 }
