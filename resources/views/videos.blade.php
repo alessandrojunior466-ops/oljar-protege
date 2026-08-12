@@ -6,23 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Olhar Que Protege - Vídeos</title>
     <link rel="stylesheet" href="{{ asset('assets/css/blog.css') }}">
-    <style>
-        .video-player-container {
-            width: 100%;
-            height: 100%;
-            min-height: 250px;
-            background-color: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .video-player-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/videos.css') }}">
 </head>
 
 <body>
@@ -36,7 +20,7 @@
                 <nav>
                     <a href="{{ route('home') }}">Home</a>
                     <a href="{{ route('sobre') }}">Sobre</a>
-                    <a href="{{ route('videos') }}">Vídeos</a>
+                    <a href="{{ route('videos') }}" class="{{ request()->routeIs('videos') ? 'active' : '' }}">Vídeos</a>
                     <a href="{{ route('blog') }}">Blog</a>
                     <a href="{{ route('login') }}">Login</a>
                 </nav>
@@ -59,15 +43,18 @@
                 <div class="card-post-grande">
                     <div class="imagem-post">
                         <div class="video-player-container">
-                            <video controls preload="metadata">
-                                <source src="{{ asset('storage/' . $destaque->arquivo) }}#t=0.1" type="video/mp4">
-                                Seu navegador não suporta a exibição deste vídeo.
-                            </video>
+                            @if (filter_var($destaque->arquivo ?? $destaque->url_video, FILTER_VALIDATE_URL))
+                                <iframe src="{{ $destaque->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
+                            @else
+                                <video controls preload="metadata">
+                                    <source src="{{ asset('storage/' . $destaque->arquivo) }}#t=0.1" type="video/mp4">
+                                    Seu navegador não suporta a exibição deste vídeo.
+                                </video>
+                            @endif
                         </div>
                     </div>
                     <div class="conteudo-post">
-                        <span class="post-date"
-                            style="font-size: 12px; color: #6b7280; display: block; margin-bottom: 5px;">
+                        <span class="post-meta-date">
                             Por {{ $destaque->autor?->name ?? $destaque->autor?->nome ?? 'Administrador' }} • {{ $destaque->created_at->format('d/m/Y') }}
                         </span>
                         <h2>{{ $destaque->titulo }}</h2>
@@ -84,15 +71,18 @@
                 @forelse($videos->skip(1) as $video)
                     <!-- Card de Vídeo Individual -->
                     <div class="card-post-pequeno">
-                        <div style="width: 100%; height: 180px; background-color: #000;">
-                            <video controls preload="metadata" style="width: 100%; height: 100%; object-fit: cover;">
-                                <source src="{{ asset('storage/' . $video->arquivo) }}#t=0.1" type="video/mp4">
-                                Seu navegador não suporta a exibição deste vídeo.
-                            </video>
+                        <div class="video-thumb-small">
+                            @if (filter_var($video->arquivo ?? $video->url_video, FILTER_VALIDATE_URL))
+                                <iframe src="{{ $video->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
+                            @else
+                                <video controls preload="metadata">
+                                    <source src="{{ asset('storage/' . $video->arquivo) }}#t=0.1" type="video/mp4">
+                                    Seu navegador não suporta a exibição deste vídeo.
+                                </video>
+                            @endif
                         </div>
                         <div class="conteudo-post-pequeno">
-                            <span class="post-date"
-                                style="font-size: 11px; color: #9ca3af; display: block; margin-bottom: 5px;">
+                            <span class="post-meta-small">
                                 Por {{ $video->autor?->name ?? $video->autor?->nome ?? 'Administrador' }} • {{ $video->created_at->format('d/m/Y') }}
                             </span>
 
@@ -106,8 +96,7 @@
                     </div>
                 @empty
                     @if (!$destaque)
-                        <div class="empty-state"
-                            style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #9ca3af;">
+                        <div class="empty-state-grid">
                             <p>Nenhum vídeo encontrado no momento. Volte mais tarde!</p>
                         </div>
                     @endif

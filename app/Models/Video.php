@@ -4,21 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Video extends Model
 {
     use HasFactory;
 
+    // Define explicitamente o nome da tabela no banco de dados
+    protected $table = 'videos';
+
     protected $fillable = [
         'titulo',
         'descricao',
         'arquivo',
-        'user_id', // garante que a chave do autor possa ser gravada
+        'user_id',
     ];
 
     /**
-     * Relacionamento com o usuário criador do vídeo
+     * Relacionamento com o usuário/autor
      */
     public function autor()
     {

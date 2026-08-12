@@ -240,4 +240,13 @@ class SiteController extends Controller
 
         return redirect()->route('dashboard.videos')->with('success', 'Vídeo excluído com sucesso!');
     }
+    public function apiVideos()
+{
+    $videos = \App\Models\Video::latest()->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $videos
+    ], 200);
+}
 }

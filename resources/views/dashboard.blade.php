@@ -84,7 +84,7 @@
                             <div class="form-group">
                                 <label for="titulo">Título da Publicação</label>
                                 <input type="text" name="titulo" id="titulo"
-                                    value="{{ old('titulo', $postEdicao ? $postEdicao->titulo : '') }}" required
+                                    value="{{ old('titulo', isset($postEdicao) && $postEdicao ? $postEdicao->titulo : '') }}" required
                                     placeholder="Ex: A importância do diálogo aberto...">
                             </div>
 
@@ -103,7 +103,7 @@
                             <div class="form-group">
                                 <label for="conteudo">Conteúdo / Texto</label>
                                 <textarea name="conteudo" id="conteudo" rows="6" required
-                                    placeholder="Digite o conteúdo completo da sua publicação aqui...">{{ old('conteudo', $postEdicao ? $postEdicao->conteudo : '') }}</textarea>
+                                    placeholder="Digite o conteúdo completo da sua publicação aqui...">{{ old('conteudo', isset($postEdicao) && $postEdicao ? $postEdicao->conteudo : '') }}</textarea>
                             </div>
 
                             <button type="submit" class="btn-submit">
