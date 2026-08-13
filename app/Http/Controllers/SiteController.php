@@ -37,6 +37,15 @@ class SiteController extends Controller
     }
 
     /**
+     * 3.1 EXIBIR VÍDEO INDIVIDUAL (SHOW)
+     */
+    public function videosShow($id)
+    {
+        $video = Video::with('autor')->findOrFail($id);
+        return view('videos-show', compact('video'));
+    }
+
+    /**
      * 4. PÁGINA DO BLOG
      */
     public function blog()
@@ -240,13 +249,17 @@ class SiteController extends Controller
 
         return redirect()->route('dashboard.videos')->with('success', 'Vídeo excluído com sucesso!');
     }
-    public function apiVideos()
-{
-    $videos = \App\Models\Video::latest()->get();
 
-    return response()->json([
-        'success' => true,
-        'data' => $videos
-    ], 200);
-}
+    /**
+     * 12. API VÍDEOS
+     */
+    public function apiVideos()
+    {
+        $videos = Video::latest()->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $videos
+        ], 200);
+    }
 }

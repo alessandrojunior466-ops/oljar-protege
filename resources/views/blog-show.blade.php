@@ -19,8 +19,8 @@
                 <nav>
                     <a href="{{ route('home') }}">Home</a>
                     <a href="{{ route('sobre') }}">Sobre</a>
-                    <a href="{{ route('videos') }}">Vídeos</a>
-                    <a href="{{ route('blog') }}">Blog</a>
+                    <a href="{{ route('videos.index') }}">Vídeos</a>
+                    <a href="{{ route('blog') }}" class="{{ request()->routeIs('blog*') ? 'active' : '' }}">Blog</a>
                     <a href="{{ route('login') }}">Login</a>
                 </nav>
             </div>
@@ -34,7 +34,7 @@
 
             <article class="detalhe-post">
                 <span class="post-date" style="font-size: 13px; color: #6b7280; display: block; margin-bottom: 10px;">
-                    Publicado em {{ $post->created_at->format('d/m/Y') }}
+                    Por {{ $post->autor?->name ?? $post->autor?->nome ?? 'Administrador' }} • Publicado em {{ $post->created_at->format('d/m/Y') }}
                 </span>
 
                 <h1 style="font-size: 2.2rem; color: #1e1b4b; margin-bottom: 15px;">{{ $post->titulo }}</h1>
@@ -44,7 +44,7 @@
                 @endif
 
                 <div class="conteudo-texto">
-                    {!! e($post->conteudo) !!}
+                    {!! nl2br(e($post->conteudo)) !!}
                 </div>
             </article>
         </main>

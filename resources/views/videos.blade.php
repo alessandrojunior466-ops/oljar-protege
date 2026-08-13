@@ -20,7 +20,8 @@
                 <nav>
                     <a href="{{ route('home') }}">Home</a>
                     <a href="{{ route('sobre') }}">Sobre</a>
-                    <a href="{{ route('videos') }}" class="{{ request()->routeIs('videos') ? 'active' : '' }}">Vídeos</a>
+                    <!-- ROTA ALINHADA COM O WEB.PHP: videos.index -->
+                    <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos*') ? 'active' : '' }}">Vídeos</a>
                     <a href="{{ route('blog') }}">Blog</a>
                     <a href="{{ route('login') }}">Login</a>
                 </nav>
@@ -57,7 +58,11 @@
                         <span class="post-meta-date">
                             Por {{ $destaque->autor?->name ?? $destaque->autor?->nome ?? 'Administrador' }} • {{ $destaque->created_at->format('d/m/Y') }}
                         </span>
-                        <h2>{{ $destaque->titulo }}</h2>
+
+                        <a href="{{ route('videos.show', $destaque->id) }}" style="text-decoration: none; color: inherit;">
+                            <h2>{{ $destaque->titulo }}</h2>
+                        </a>
+
                         <p>{{ Str::limit($destaque->descricao, 200) }}</p>
                         <div class="tags-container">
                             <span class="tag-circular">DESTAQUE</span>
@@ -86,7 +91,10 @@
                                 Por {{ $video->autor?->name ?? $video->autor?->nome ?? 'Administrador' }} • {{ $video->created_at->format('d/m/Y') }}
                             </span>
 
-                            <h3>{{ $video->titulo }}</h3>
+                            <a href="{{ route('videos.show', $video->id) }}" style="text-decoration: none; color: inherit;">
+                                <h3>{{ $video->titulo }}</h3>
+                            </a>
+
                             <p>{{ Str::limit($video->descricao, 120) }}</p>
 
                             <div class="tags-container">

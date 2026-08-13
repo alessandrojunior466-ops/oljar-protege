@@ -11,7 +11,8 @@ use App\Http\Controllers\SiteController;
 */
 Route::get('/', [SiteController::class, 'index'])->name('home');
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
-Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
+Route::get('/videos', [SiteController::class, 'videos'])->name('videos.index'); // Renomeado para videos.index
+Route::get('/videos/{id}', [SiteController::class, 'videosShow'])->name('videos.show');
 Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
 Route::get('/blog/{id}', [SiteController::class, 'blogShow'])->name('blog.show');
 

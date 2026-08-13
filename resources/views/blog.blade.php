@@ -18,7 +18,7 @@
 <body>
     <div class="container">
 
-        <!-- CABEÇALHO FIXO ORIGINAL -->
+        <!-- CABEÇALHO FIXO -->
         <header>
             <div class="cabecalho">
                 <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto"
@@ -26,8 +26,8 @@
                 <nav>
                     <a href="{{ route('home') }}">Home</a>
                     <a href="{{ route('sobre') }}">Sobre</a>
-                    <a href="{{ route('videos') }}">Vídeos</a>
-                    <a href="{{ route('blog') }}">Blog</a>
+                    <a href="{{ route('videos.index') }}">Vídeos</a>
+                    <a href="{{ route('blog') }}" class="{{ request()->routeIs('blog*') ? 'active' : '' }}">Blog</a>
                     <a href="{{ route('login') }}">Login</a>
                 </nav>
             </div>
