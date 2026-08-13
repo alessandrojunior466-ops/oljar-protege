@@ -13,8 +13,8 @@ use App\Http\Controllers\SiteController;
 Route::get('/', [SiteController::class, 'index'])->name('home');
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
 
-// Corrigido para 'videos.index' para bater exatamente com a view
-Route::get('/videos', [SiteController::class, 'videos'])->name('videos.index');
+// Corrigido para 'videos' para bater com o {{ route('videos') }} da View
+Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
 
 Route::get('/videos/{id}', [SiteController::class, 'videosShow'])->name('videos.show');
 Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
@@ -51,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
     // Gerenciamento de Vídeos (Painel Admin)
     Route::get('/dashboard/videos', [SiteController::class, 'dashboardVideos'])->name('dashboard.videos');
 
-    // Rotas de envio/edição/deleção de vídeos com nomes padronizados
+    // Rotas de envio/edição/deleção de vídeos
     Route::post('/dashboard/videos', [SiteController::class, 'videoStore'])->name('videos.store');
     Route::get('/dashboard/videos/edit/{id}', [SiteController::class, 'videoEdit'])->name('dashboard.videos.edit');
     Route::put('/dashboard/videos/update/{id}', [SiteController::class, 'videoUpdate'])->name('videos.update');
