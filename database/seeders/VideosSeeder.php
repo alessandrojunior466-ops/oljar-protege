@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Video;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash; // <-- Importação necessária para o Hash::make()
+use Illuminate\Support\Facades\Hash;
 
 class VideosSeeder extends Seeder
 {
@@ -21,11 +21,30 @@ class VideosSeeder extends Seeder
             'password' => Hash::make('alequeprotege709'),
         ]);
 
-        Video::create([
-            'titulo'    => 'Vídeo Inicial de Apresentação',
-            'descricao' => 'Breve descrição do Vídeo Inicial de Apresentação',
-            'arquivo'   => 'videos/F8PCdITz4DZyiOxnpjSmiwkAWCImENfxwPm1fbTB.mp4',
-            'user_id'   => $user->id,
-        ]);
+        // Lista de vídeos correspondente à estrutura da tela e arquivos na pasta storage
+        $videos = [
+            [
+                'titulo'    => 'Terceiro Vídeo de Apresentação',
+                'descricao' => 'Breve descrição do Terceiro Vídeo Inicial de Apresentação',
+                'arquivo'   => 'videos/F8PCdITz4DZyiOxnpjSmiwkAWCImENfxwPm1fbTB.mp4',
+                'user_id'   => $user->id,
+            ],
+            [
+                'titulo'    => 'Segundo Vídeo de Apresentação',
+                'descricao' => 'Breve descrição do Segundo Vídeo Inicial de Apresentação',
+                'arquivo'   => 'videos/PFJ9OKMDGK7nS4jk8ZeOZH5DtXv8eTTk.mp4', // ajuste a extensão caso não seja .mp4
+                'user_id'   => $user->id,
+            ],
+            [
+                'titulo'    => 'Vídeo Inicial de Apresentação',
+                'descricao' => 'Breve descrição do Vídeo Inicial de Apresentação',
+                'arquivo'   => 'videos/urEmwu5kZDEfYINjFScZZa78vazf0Xk3U3.mp4', // ajuste a extensão caso não seja .mp4
+                'user_id'   => $user->id,
+            ],
+        ];
+
+        foreach ($videos as $video) {
+            Video::create($video);
+        }
     }
 }

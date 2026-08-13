@@ -13,8 +13,8 @@ use App\Http\Controllers\SiteController;
 Route::get('/', [SiteController::class, 'index'])->name('home');
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
 
-// Ajustado para 'videos' para bater com o route('videos') do Blade
-Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
+// Corrigido para 'videos.index' para bater exatamente com a view
+Route::get('/videos', [SiteController::class, 'videos'])->name('videos.index');
 
 Route::get('/videos/{id}', [SiteController::class, 'videosShow'])->name('videos.show');
 Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
