@@ -44,7 +44,11 @@ class VideosSeeder extends Seeder
                 'user_id'   => $user->id,
             ],
         ];
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> a3039a46724457f9d0c51443afafd34f37be68d5
         foreach ($videos as $video) {
             Video::create($video);
         }

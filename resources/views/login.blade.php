@@ -15,12 +15,12 @@
                 <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto"
                     alt="Logo Olhar Que Protege" />
                 <nav>
-                    <a href="{{ route('home') }}">Home</a>
-                    <a href="/sobre">Sobre</a>
-                    <a href="/videos">Vídeos</a>
-                    <a href="/blog">Blog</a>
-                    <a href="/login">Login</a>
-                </nav>
+    <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+    <a href="{{ route('sobre') }}" class="{{ request()->routeIs('sobre') ? 'active' : '' }}">Sobre</a>
+    <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
+    <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
+    <a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'active' : '' }}">Login</a>
+</nav>
             </div>
         </header>
 
