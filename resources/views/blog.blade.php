@@ -55,7 +55,8 @@
                         <div class="conteudo-post">
                             <span class="post-date"
                                 style="font-size: 12px; color: #6b7280; display: block; margin-bottom: 5px;">
-                                Por {{ $destaque->autor?->name ?? $destaque->autor?->nome ?? 'Administrador' }} • {{ $destaque->created_at->format('d/m/Y') }}
+                                Por {{ $destaque->autor?->name ?? ($destaque->autor?->nome ?? 'Administrador') }} •
+                                {{ $destaque->created_at->format('d/m/Y') }}
                             </span>
                             <h2>{{ $destaque->titulo }}</h2>
                             <p>{{ Str::limit($destaque->conteudo, 200) }}</p>
@@ -80,7 +81,8 @@
                             <div class="conteudo-post-pequeno">
                                 <span class="post-date"
                                     style="font-size: 11px; color: #9ca3af; display: block; margin-bottom: 5px;">
-                                    Por {{ $post->autor?->name ?? $post->autor?->nome ?? 'Administrador' }} • {{ $post->created_at->format('d/m/Y') }}
+                                    Por {{ $post->autor?->name ?? ($post->autor?->nome ?? 'Administrador') }} •
+                                    {{ $post->created_at->format('d/m/Y') }}
                                 </span>
 
                                 <h3>{{ $post->titulo }}</h3>
