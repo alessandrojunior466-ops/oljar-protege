@@ -9,9 +9,13 @@ use App\Http\Controllers\SiteController;
 | Rotas Públicas do Site
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [SiteController::class, 'index'])->name('home');
 Route::get('/sobre', [SiteController::class, 'sobre'])->name('sobre');
-Route::get('/videos', [SiteController::class, 'videos'])->name('videos.index'); // Renomeado para videos.index
+
+// Ajustado para 'videos' para bater com o route('videos') do Blade
+Route::get('/videos', [SiteController::class, 'videos'])->name('videos');
+
 Route::get('/videos/{id}', [SiteController::class, 'videosShow'])->name('videos.show');
 Route::get('/blog', [SiteController::class, 'blog'])->name('blog');
 Route::get('/blog/{id}', [SiteController::class, 'blogShow'])->name('blog.show');
@@ -31,13 +35,13 @@ Route::get('/login', function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
-    
+
     // Redireciona /dashboard para a área do blog
     Route::redirect('/dashboard', '/dashboard/blog');
 
     // Gerenciamento do Blog (Tela Principal)
     Route::get('/dashboard/blog', [SiteController::class, 'dashboard'])->name('dashboard');
-    
+
     // Ações do Blog (Criar, Editar, Atualizar, Deletar)
     Route::post('/dashboard/blog/store', [SiteController::class, 'store'])->name('blog.store');
     Route::get('/dashboard/blog/edit/{id}', [SiteController::class, 'edit'])->name('dashboard.edit');
@@ -46,7 +50,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Gerenciamento de Vídeos (Painel Admin)
     Route::get('/dashboard/videos', [SiteController::class, 'dashboardVideos'])->name('dashboard.videos');
-    
+
     // Rotas de envio/edição/deleção de vídeos com nomes padronizados
     Route::post('/dashboard/videos', [SiteController::class, 'videoStore'])->name('videos.store');
     Route::get('/dashboard/videos/edit/{id}', [SiteController::class, 'videoEdit'])->name('dashboard.videos.edit');
