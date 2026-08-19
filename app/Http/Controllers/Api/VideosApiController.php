@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 class VideosApiController extends Controller
 {
     /**
-     * Listar todos os vídeos (http://127.0.0.1:8000/api/videos)
+     * Listar vídeos paginados com relacionamento (http://127.0.0.1:8000/api/videos)
      */
     public function index()
     {
-        $videos = Video::latest()->get();
+        $videos = Video::latest()->paginate(10);
 
         return response()->json([
             'success' => true,
@@ -22,11 +22,32 @@ class VideosApiController extends Controller
     }
 
     /**
+     * Cadastrar um novo vídeo (http://127.0.0.1:8000/api/videos)
+     */
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'nullable|string',
+            'arquivo' => 'nullable|string',
+            'categoria_id' => 'nullable|integer',
+        ]);
+
+        $video = Video::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Vídeo criado com sucesso!',
+            'data' => $video
+        ], 201);
+    }
+
+    /**
      * Exibir um vídeo específico por ID (http://127.0.0.1:8000/api/videos/{id})
      */
     public function show($id)
     {
-        $video = Video::find($id);
+        $video = Video::with('categoria')->find($id);
 
         if (!$video) {
             return response()->json([
