@@ -11,8 +11,9 @@ return new class extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
             $table->string('titulo');
-            $table->text('descricao');
-            $table->string('arquivo');
+            $table->text('descricao')->nullable();
+            $table->string('arquivo')->nullable();
+            $table->foreignId('categoria_id')->nullable()->constrained('categorias')->nullOnDelete();
             $table->timestamps();
         });
     }
