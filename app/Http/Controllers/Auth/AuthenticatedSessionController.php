@@ -28,8 +28,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Substitua o 'intended' para redirecionar explicitamente para o dashboard do seu painel admin
-        return redirect('/dashboard');
+        // Corrigido para redirecionar para a área comum ou verificar o papel do usuário
+        $usuario = Auth::user();
+
+        if ($usuario && $usuario->role !== 'user') {
+            return redirect()->intended('/admin/dashboard/blog');
+        }
+
+        return redirect()->intended('/extras');
     }
 
     /**

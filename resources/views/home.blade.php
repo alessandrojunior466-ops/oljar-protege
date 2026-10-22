@@ -19,7 +19,21 @@
     <a href="{{ route('sobre') }}" class="{{ request()->routeIs('sobre') ? 'active' : '' }}">Sobre</a>
     <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
     <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
-    <a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'active' : '' }}">Login</a>
+    
+    <!-- Cadastrar-me (Usuário Comum) -->
+    <a href="{{ route('extras.register') }}" class="{{ request()->routeIs('extras.register') ? 'active' : '' }}">
+        Cadastrar-me
+    </a>
+
+    <!-- Entrar (Usuário Comum) -->
+    <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
+        Entrar
+    </a>
+
+    <!-- Página Equipe por último -->
+    <a href="{{ route('admin.register') }}" class="{{ request()->routeIs('admin.register') ? 'active' : '' }}">
+        Equipe
+    </a>
 </nav>
             </div>
         </header>

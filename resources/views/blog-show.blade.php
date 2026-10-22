@@ -21,7 +21,21 @@
     <a href="{{ route('sobre') }}" class="{{ request()->routeIs('sobre') ? 'active' : '' }}">Sobre</a>
     <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
     <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
-    <a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'active' : '' }}">Login</a>
+    
+    <!-- Cadastrar-me -->
+    <a href="{{ route('extras.register') }}" class="{{ request()->routeIs('extras.register') ? 'active' : '' }}">
+        Cadastrar-me
+    </a>
+
+    <!-- Entrar -->
+    <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
+        Entrar
+    </a>
+
+    <!-- Equipe -->
+    <a href="{{ route('admin.register') }}" class="{{ request()->routeIs('admin.register') ? 'active' : '' }}">
+        Equipe
+    </a>
 </nav>
             </div>
         </header>
@@ -30,7 +44,9 @@
         <main class="container-blog">
             <div class="espacoo"></div>
 
-            <a href="{{ route('blog') }}" class="btn-voltar">&larr; Voltar para o Blog</a>
+            <a href="{{ route('blog.index') }}" class="btn-voltar">
+    &larr; Voltar para o Blog
+</a>
 
             <article class="detalhe-post">
                 <span class="post-date" style="font-size: 13px; color: #6b7280; display: block; margin-bottom: 10px;">
