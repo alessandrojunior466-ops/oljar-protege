@@ -108,6 +108,12 @@ Route::post('/admin/cadastro', [
 |--------------------------------------------------------------------------
 */
 
+/*
+|--------------------------------------------------------------------------
+| Conteúdos Exclusivos dos Usuários
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth')->group(function () {
 
     Route::get('/extras', function (Request $request) {
@@ -120,10 +126,9 @@ Route::middleware('auth')->group(function () {
             'Você não tem permissão para acessar esta área.'
         );
 
-        return view('profile.extras');
+        return view('extras'); // Corrigido de 'profile.extras' para 'extras'
     })->name('extras');
 });
-
 
 /*
 |--------------------------------------------------------------------------
