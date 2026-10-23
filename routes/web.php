@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\ExtrasAuthController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\Auth\PasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,7 +120,7 @@ Route::middleware('auth')->group(function () {
             'Você não tem permissão para acessar esta área.'
         );
 
-        return view('extras');
+        return view('profile.extras');
     })->name('extras');
 });
 
@@ -202,7 +203,7 @@ Route::prefix('admin')
 
 /*
 |--------------------------------------------------------------------------
-| Perfil do Usuário Autenticado
+| Perfil do Usuário Autenticado & Atualizações de Conta
 |--------------------------------------------------------------------------
 */
 
@@ -222,6 +223,18 @@ Route::middleware('auth')->group(function () {
         ProfileController::class,
         'destroy'
     ])->name('profile.destroy');
+
+    // Rota para atualização de palavra-passe do perfil (corrige o erro route('password.update'))
+    Route::put('/password', [
+        PasswordController::class,
+        'update'
+    ])->name('password.update');
+
+    // Rota de logout genérico para compatibilidade de visualizações do Breeze
+    Route::post('/logout', [
+        ExtrasAuthController::class,
+        'logout'
+    ])->name('logout');
 });
 
 
