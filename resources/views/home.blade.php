@@ -29,9 +29,12 @@
     <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
         Entrar
     </a>
-
+<!-- Extras (Usuário Comum) -->
+    <a href="{{ route('extras') }}" class="{{ request()->routeIs('extras') ? 'active' : '' }}">
+        Extras
+    </a>
     <!-- Página Equipe por último -->
-    <a href="{{ route('admin.register') }}" class="{{ request()->routeIs('admin.register') ? 'active' : '' }}">
+    <a href="{{ route('admin.login') }}" class="{{ request()->routeIs('admin.register') ? 'active' : '' }}">
         Equipe
     </a>
 </nav>

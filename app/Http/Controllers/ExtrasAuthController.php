@@ -14,7 +14,12 @@ class ExtrasAuthController extends Controller
      */
     public function showLogin()
     {
-        return view('extras-login'); // Ajuste o nome da view se necessário
+        // Se já estiver logado, redireciona estritamente para a página inicial
+        if (Auth::check()) {
+            return redirect('/');
+        }
+
+        return view('extras-login');
     }
 
     /**
@@ -39,19 +44,15 @@ class ExtrasAuthController extends Controller
 
         $usuario = Auth::user();
 
-        // Impede que administradores entrem na área de usuários comuns.
+        // Se um administrador tentar logar pela tela de usuário comum, bloqueia e redireciona
         if ($usuario->role !== 'user') {
             Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            return redirect()
-                ->route('extras.login')
-                ->withErrors([
-                    'email' => 'Esta área é exclusiva para usuários comuns.',
-                ]);
+            return redirect()->route('admin.login')->withErrors([
+                'email' => 'Esta conta é de administrador. Utilize o login da equipe.'
+            ]);
         }
 
+        // Redireciona para a área de conteúdos exclusivos de usuários comuns
         return redirect()->route('extras');
     }
 
@@ -60,6 +61,11 @@ class ExtrasAuthController extends Controller
      */
     public function showRegister()
     {
+        // Se já estiver logado, redireciona estritamente para a página inicial
+        if (Auth::check()) {
+            return redirect('/');
+        }
+
         return view('extras-cadastro');
     }
 
@@ -76,10 +82,10 @@ class ExtrasAuthController extends Controller
 
         // 1. Salva no banco de dados do Laravel
         $user = User::create([
-            'nome' => $request->name,   // Ajustado para 'nome' conforme a coluna da sua tabela
+            'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user',           // Força o papel de usuário comum
+            'role' => 'user', // Força o papel de usuário comum
         ]);
 
         // 2. Salva as informações no arquivo JSON usando caminho absoluto no storage/app/users.json
@@ -103,6 +109,20 @@ class ExtrasAuthController extends Controller
 
         Auth::login($user);
 
+        // Redireciona para a área de extras após o cadastro
         return redirect()->route('extras');
+    }
+
+    /**
+     * Realiza o logout do usuário comum.
+     */
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }

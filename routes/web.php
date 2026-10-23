@@ -41,61 +41,64 @@ Route::get('/blog/{id}', [SiteController::class, 'blogShow'])
 
 Route::get('/login', function () {
     return redirect()->route('extras.login');
-})->middleware('guest')->name('login');
+})->name('login');
 
 
 /*
 |--------------------------------------------------------------------------
-| Cadastro e Login dos Usuários Comuns (Área Extra)
+| Cadastro e Login dos Usuários Comuns e Administração
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('guest')->group(function () {
+// Cadastro de Usuários Comuns
+Route::get('/extras/cadastro', [
+    ExtrasAuthController::class,
+    'showRegister'
+])->name('extras.register');
 
-    // Cadastro de Usuários Comuns
-    Route::get('/extras/cadastro', [
-        ExtrasAuthController::class,
-        'showRegister'
-    ])->name('extras.register');
+Route::post('/extras/cadastro', [
+    ExtrasAuthController::class,
+    'register'
+])->name('extras.register.submit');
 
-    Route::post('/extras/cadastro', [
-        ExtrasAuthController::class,
-        'register'
-    ])->name('extras.register.submit');
+// Login de Usuários Comuns
+Route::get('/extras/login', [
+    ExtrasAuthController::class,
+    'showLogin'
+])->name('extras.login');
 
-    // Login de Usuários Comuns
-    Route::get('/extras/login', [
-        ExtrasAuthController::class,
-        'showLogin'
-    ])->name('extras.login');
+Route::post('/extras/login', [
+    ExtrasAuthController::class,
+    'login'
+])->name('extras.login.submit');
 
-    Route::post('/extras/login', [
-        ExtrasAuthController::class,
-        'login'
-    ])->name('extras.login.submit');
+// Logout de Usuários Comuns
+Route::post('/extras/logout', [
+    ExtrasAuthController::class,
+    'logout'
+])->name('extras.logout');
 
-    // Login administrativo
-    Route::get('/admin/login', [
-        AdminAuthController::class,
-        'showLogin'
-    ])->name('admin.login');
+// Login administrativo
+Route::get('/admin/login', [
+    AdminAuthController::class,
+    'showLogin'
+])->name('admin.login');
 
-    Route::post('/admin/login', [
-        AdminAuthController::class,
-        'login'
-    ])->name('admin.login.submit');
+Route::post('/admin/login', [
+    AdminAuthController::class,
+    'login'
+])->name('admin.login.submit');
 
-    // Cadastro de Administradores (Página Equipe acessível publicamente para novos membros)
-    Route::get('/admin/cadastro', [
-        AdminAuthController::class,
-        'showRegister'
-    ])->name('admin.register');
+// Cadastro de Administradores (Página Equipe acessível publicamente para novos membros)
+Route::get('/admin/cadastro', [
+    AdminAuthController::class,
+    'showRegister'
+])->name('admin.register');
 
-    Route::post('/admin/cadastro', [
-        AdminAuthController::class,
-        'register'
-    ])->name('admin.register.submit');
-});
+Route::post('/admin/cadastro', [
+    AdminAuthController::class,
+    'register'
+])->name('admin.register.submit');
 
 
 /*
@@ -224,10 +227,10 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Autenticação Padrão do Laravel Breeze
+| Autenticação Padrão do Laravel Breeze (Desativada para evitar conflitos)
 |--------------------------------------------------------------------------
 */
 
-if (file_exists(__DIR__ . '/auth.php')) {
-    require __DIR__ . '/auth.php';
-}
+// if (file_exists(__DIR__ . '/auth.php')) {
+//     require __DIR__ . '/auth.php';
+// }
