@@ -29,10 +29,10 @@
                 </div>
                 <div class="footer-actions">
                     <a href="{{ route('profile.edit') }}" class="btn-profile">Perfil</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn-logout">Sair</button>
-                    </form>
+                    <form method="POST" action="{{ route('extras.logout') }}">
+    @csrf
+    <button type="submit" class="btn-logout">Sair</button>
+</form>
                 </div>
             </div>
         </aside>

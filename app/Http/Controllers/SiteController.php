@@ -74,7 +74,8 @@ class SiteController extends Controller
         $publicacoes = Blog::with('autor')->latest()->get();
         $postEdicao = null;
 
-        return view('dashboard', compact('publicacoes', 'postEdicao'));
+        // Corrigido para 'admin-dashboard'
+        return view('admin-dashboard', compact('publicacoes', 'postEdicao'));
     }
 
     /**
@@ -85,7 +86,8 @@ class SiteController extends Controller
         $videos = Video::with('autor')->latest()->get();
         $videoEdicao = null;
 
-        return view('dashboard-videos', compact('videos', 'videoEdicao'));
+        // Ajustado para 'admin-dashboard-videos' (ou 'dashboard-videos' caso prefira)
+        return view('admin-dashboard-videos', compact('videos', 'videoEdicao'));
     }
 
     /**
@@ -123,7 +125,8 @@ class SiteController extends Controller
         $publicacoes = Blog::with('autor')->latest()->get();
         $postEdicao = Blog::findOrFail($id);
 
-        return view('dashboard', compact('publicacoes', 'postEdicao'));
+        // Corrigido para 'admin-dashboard'
+        return view('admin-dashboard', compact('publicacoes', 'postEdicao'));
     }
 
     /**
@@ -204,7 +207,7 @@ class SiteController extends Controller
         $videos = Video::with('autor')->latest()->get();
         $videoEdicao = Video::findOrFail($id);
 
-        return view('dashboard-videos', compact('videos', 'videoEdicao'));
+        return view('admin-dashboard-videos', compact('videos', 'videoEdicao'));
     }
 
     /**

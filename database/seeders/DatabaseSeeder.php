@@ -3,38 +3,33 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // 1. Criar os usuários administradores garantindo idempotência
-        User::firstOrCreate(
-            ['email' => 'alessandro@olharqueprotege.com'],
-            ['nome' => 'Alessandro', 'password' => Hash::make('alequeprotege709')]
-        );
+        // Limpa ou cria os administradores com a password rigorosamente gerada por Hash
+        $admins = [
+            ['name' => 'Alessandro', 'email' => 'alessandro@olharqueprotege.com', 'password' => 'aloqueprotege789'],
+            ['name' => 'Ana', 'email' => 'ana@olharqueprotege.com', 'password' => 'anaqueprotege789'],
+            ['name' => 'Felipe', 'email' => 'felipe@olharqueprotege.com', 'password' => 'fequeprotege789'],
+            ['name' => 'Luis', 'email' => 'luis@olharqueprotege.com', 'password' => 'luqueprotege789'],
+        ];
 
-        User::firstOrCreate(
-            ['email' => 'ana@olharqueprotege.com'],
-            ['nome' => 'Ana', 'password' => Hash::make('anaqueprotege709')]
-        );
+        foreach ($admins as $admin) {
+            User::updateOrCreate(
+                ['email' => $admin['email']],
+                [
+                    'name' => $admin['name'],
+                    'password' => Hash::make($admin['password']),
+                    'role' => 'admin'
+                ]
+            );
+        }
 
-        User::firstOrCreate(
-            ['email' => 'felipe@olharqueprotege.com'],
-            ['nome' => 'Felipe', 'password' => Hash::make('fequeprotege709')]
-        );
-
-        User::firstOrCreate(
-            ['email' => 'luis@olharqueprotege.com'],
-            ['nome' => 'Luis', 'password' => Hash::make('luqueprotege709')]
-        );
-
-        // 2. Chamar os outros Seeders
+        // Chamar os outros Seeders se existirem
         $this->call([
             BlogSeeder::class,
             VideosSeeder::class,
