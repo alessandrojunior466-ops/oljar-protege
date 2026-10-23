@@ -1,0 +1,51 @@
+/* Estilos personalizados para a Área de Conteúdos Exclusivos (Extras) */
+.extras-container {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 80vh;
+    padding: 40px 20px;
+}
+
+.extras-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    padding: 32px;
+    border-left: 5px solid #4f46e5;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.extras-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+.extras-title {
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 12px;
+}
+
+.extras-text {
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.extras-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.extras-btn:hover {
+    background-color: #4338ca;
+}

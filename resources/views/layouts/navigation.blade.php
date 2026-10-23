@@ -1,4 +1,7 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-100 shadow-sm">
+    <!-- Importação opcional do CSS personalizado na navegação -->
+    <link rel="stylesheet" href="{{ asset('assets/css/extras.css') }}">
+
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -6,20 +9,22 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('blog.index') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="130" height="auto" alt="Logo Olhar Que Protege" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <!-- Link para o Blog Público -->
                     <x-nav-link :href="route('blog.index')" :active="request()->routeIs('blog.index')">
                         {{ __('Blog') }}
                     </x-nav-link>
 
-                    <!-- Link para Vídeos -->
                     <x-nav-link :href="url('/videos')" :active="request()->is('videos*')">
                         {{ __('Vídeos') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('extras')" :active="request()->routeIs('extras')">
+                        {{ __('Conteúdos Exclusivos') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -28,8 +33,8 @@
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:text-gray-900 focus:outline-none transition ease-in-out duration-150">
+                            <div>{{ Auth::user()->name ?? Auth::user()->nome }}</div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -41,7 +46,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Meu Perfil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -51,7 +56,7 @@
                             <x-dropdown-link :href="route('extras.logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('Sair') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -73,27 +78,29 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <!-- Link Responsivo para o Blog -->
             <x-responsive-nav-link :href="route('blog.index')" :active="request()->routeIs('blog.index')">
                 {{ __('Blog') }}
             </x-responsive-nav-link>
 
-            <!-- Link Responsivo para Vídeos -->
             <x-responsive-nav-link :href="url('/videos')" :active="request()->is('videos*')">
                 {{ __('Vídeos') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('extras')" :active="request()->routeIs('extras')">
+                {{ __('Conteúdos Exclusivos') }}
             </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name ?? Auth::user()->nome }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('Meu Perfil') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
@@ -103,7 +110,7 @@
                     <x-responsive-nav-link :href="route('extras.logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('Sair') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

@@ -75,14 +75,21 @@ class ExtrasAuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        // 1. Salva no banco de dados do Laravel
+        // Procura pelo nome em qualquer variação possível enviada pelo formulário
+        $userName = $request->input('nome') ?? $request->input('name') ?? $request->input('username');
+
+        // Se o nome não vier preenchido do formulário, extrai o nome do e-mail para evitar crash na BD
+        if (!$userName) {
+            $userName = explode('@', $request->email)[0];
+        }
+
+        // 1. Salva no banco de dados do Laravel com segurança
         $user = User::create([
-            'name' => $request->name,
+            'name' => $userName,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'user', // Força o papel de usuário comum
@@ -98,9 +105,9 @@ class ExtrasAuthController extends Controller
         }
 
         $users[] = [
-            'name' => $request->name,
+            'name' => $userName,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $user->password, // Salva a password já hasheada
             'role' => 'user',
             'created_at' => now()->toIso8601String(),
         ];
