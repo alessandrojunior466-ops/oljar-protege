@@ -20,7 +20,8 @@ body {
 
 /* --- HEADER / CABEÇALHO FIXO --- */
 header {
-    height: 180px; /* Espaço para o menu fixo não cobrir o conteúdo */
+    height: 180px;
+    /* Espaço para o menu fixo não cobrir o conteúdo */
 }
 
 .cabecalho {
@@ -51,15 +52,35 @@ header {
 .cabecalho nav a {
     text-decoration: none;
     color: #000 !important;
-    font-weight: 700 !important; /* Mantém o negrito forte */
-    font-size: 20px !important;  /* Mudado de 16px para 20px para ficar maior */
+    font-weight: 700 !important;
+    /* Mantém o negrito forte */
+    font-size: 20px !important;
+    /* Mudado de 16px para 20px para ficar maior */
     transition: color 0.3s ease;
     font-family: 'Montserrat', sans-serif;
+
+    /* Remove a cor/fundo cinza ao clicar em dispositivos móveis e navegadores */
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
 .cabecalho nav a:hover {
     color: rgb(91, 133, 189) !important;
 }
+
+/* Remove qualquer efeito de fundo indesejado ao focar ou clicar */
+.cabecalho nav a:focus,
+.cabecalho nav a:active {
+    background-color: transparent !important;
+    outline: none !important;
+    color: #000 !important;
+}
+
+/* Mantém a cor do hover se estiver ativo/hovered */
+.cabecalho nav a.active {
+    background-color: transparent !important;
+}
+
 /* --- SEÇÃO DA HOME (welcome / home) --- */
 .cabecalho2 {
     text-align: center;
@@ -89,7 +110,8 @@ header {
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-.prev, .next {
+.prev,
+.next {
     cursor: pointer;
     position: absolute;
     top: 50%;
@@ -105,10 +127,16 @@ header {
     z-index: 10;
 }
 
-.next { right: -50px; }
-.prev { left: -50px; }
+.next {
+    right: -50px;
+}
 
-.prev:hover, .next:hover {
+.prev {
+    left: -50px;
+}
+
+.prev:hover,
+.next:hover {
     background-color: rgba(255, 255, 255, 0.8);
 }
 
@@ -123,7 +151,8 @@ header {
     transition: background-color 0.6s ease;
 }
 
-.active, .dot:hover {
+.active,
+.dot:hover {
     background-color: #717171;
 }
 
@@ -133,8 +162,13 @@ header {
 }
 
 @keyframes fade {
-    from { opacity: .4 }
-    to { opacity: 1 }
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
 }
 
 .abaixo {
@@ -233,7 +267,7 @@ header {
     height: auto;
     border: #fff solid 4px;
     border-radius: 20px;
-    box-shadow: 0px 10px 20px rgba(0,0,0,0.2);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .secao-bloco .texto-bloco {
@@ -291,5 +325,5 @@ header {
     height: auto;
     border: #fff solid 6px;
     border-radius: 20px;
-    box-shadow: 0px 20px 30px rgba(0,0,0,0.2);
+    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.2);
 }
