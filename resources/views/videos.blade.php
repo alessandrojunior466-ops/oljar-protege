@@ -18,30 +18,30 @@
                 <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto"
                     alt="Logo Olhar Que Protege" />
                 <nav>
-    <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
-    <a href="{{ route('sobre') }}" class="{{ request()->routeIs('sobre') ? 'active' : '' }}">Sobre</a>
-    <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
-    <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
-    
-    <!-- Cadastrar-me -->
-    <a href="{{ route('extras.register') }}" class="{{ request()->routeIs('extras.register') ? 'active' : '' }}">
-        Cadastrar-me
-    </a>
+                    <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+                    <a href="{{ route('sobre') }}" class="{{ request()->routeIs('sobre') ? 'active' : '' }}">Sobre</a>
+                    <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
+                    <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
+                    
+                    <!-- Cadastrar-me -->
+                    <a href="{{ route('extras.register') }}" class="{{ request()->routeIs('extras.register') ? 'active' : '' }}">
+                        Cadastrar-me
+                    </a>
 
-    <!-- Entrar -->
-    <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
-        Entrar
-    </a>
+                    <!-- Entrar -->
+                    <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
+                        Entrar
+                    </a>
 
-    <!-- Extras (Usuário Comum) -->
-    <a href="{{ route('extras') }}" class="{{ request()->routeIs('extras') ? 'active' : '' }}">
-        Extras
-    </a>
-    <!-- Página Equipe por último -->
-    <a href="{{ route('admin.login') }}" class="{{ request()->routeIs('admin.register') ? 'active' : '' }}">
-        Equipe
-    </a>
-</nav>
+                    <!-- Extras (Usuário Comum) -->
+                    <a href="{{ route('extras') }}" class="{{ request()->routeIs('extras') ? 'active' : '' }}">
+                        Extras
+                    </a>
+                    <!-- Página Equipe por último -->
+                    <a href="{{ route('admin.login') }}" class="{{ request()->routeIs('admin.register') ? 'active' : '' }}">
+                        Equipe
+                    </a>
+                </nav>
             </div>
         </header>
 
@@ -60,20 +60,23 @@
                 <!-- Vídeo em Destaque (Card Grande) -->
                 <div class="card-post-grande">
                     <div class="imagem-post">
-                        <div class="video-player-container">
-                            @if (filter_var($destaque->arquivo ?? $destaque->url_video, FILTER_VALIDATE_URL))
-                                <iframe src="{{ $destaque->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
-                            @else
-                                <video controls preload="metadata">
-                                    <source src="{{ asset('storage/' . $destaque->arquivo) }}#t=0.1" type="video/mp4">
-                                    Seu navegador não suporta a exibição deste vídeo.
-                                </video>
-                            @endif
-                        </div>
+                        <a href="{{ route('videos.show', $destaque->id) }}" style="text-decoration: none; display: block; height: 100%;">
+                            <div class="video-player-container">
+                                @if (filter_var($destaque->arquivo ?? $destaque->url_video, FILTER_VALIDATE_URL))
+                                    <iframe src="{{ $destaque->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
+                                @else
+                                    <video controls preload="metadata">
+                                        <source src="{{ asset('storage/' . $destaque->arquivo) }}#t=0.1" type="video/mp4">
+                                        Seu navegador não suporta a exibição deste vídeo.
+                                    </video>
+                                @endif
+                            </div>
+                        </a>
                     </div>
                     <div class="conteudo-post">
                         <span class="post-meta-date">
-                            Por {{ $destaque->autor?->name ?? $destaque->autor?->nome ?? 'Administrador' }} • {{ $destaque->created_at->format('d/m/Y') }}
+                            Por {{ $destaque->autor?->name ?? $destaque->autor?->nome ?? 'Administrador' }}
+                            {{ $destaque->created_at->format('d/m/Y') }}
                         </span>
 
                         <a href="{{ route('videos.show', $destaque->id) }}" style="text-decoration: none; color: inherit;">
@@ -94,18 +97,21 @@
                     <!-- Card de Vídeo Individual -->
                     <div class="card-post-pequeno">
                         <div class="video-thumb-small">
-                            @if (filter_var($video->arquivo ?? $video->url_video, FILTER_VALIDATE_URL))
-                                <iframe src="{{ $video->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
-                            @else
-                                <video controls preload="metadata">
-                                    <source src="{{ asset('storage/' . $video->arquivo) }}#t=0.1" type="video/mp4">
-                                    Seu navegador não suporta a exibição deste vídeo.
-                                </video>
-                            @endif
+                            <a href="{{ route('videos.show', $video->id) }}" style="text-decoration: none; display: block; height: 100%;">
+                                @if (filter_var($video->arquivo ?? $video->url_video, FILTER_VALIDATE_URL))
+                                    <iframe src="{{ $video->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
+                                @else
+                                    <video controls preload="metadata">
+                                        <source src="{{ asset('storage/' . $video->arquivo) }}#t=0.1" type="video/mp4">
+                                        Seu navegador não suporta a exibição deste vídeo.
+                                    </video>
+                                @endif
+                            </a>
                         </div>
                         <div class="conteudo-post-pequeno">
                             <span class="post-meta-small">
-                                Por {{ $video->autor?->name ?? $video->autor?->nome ?? 'Administrador' }} • {{ $video->created_at->format('d/m/Y') }}
+                                Por {{ $video->autor?->name ?? $video->autor?->nome ?? 'Administrador' }}
+                                {{ $video->created_at->format('d/m/Y') }}
                             </span>
 
                             <a href="{{ route('videos.show', $video->id) }}" style="text-decoration: none; color: inherit;">
