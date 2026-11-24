@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
 
-    <!-- ADICIONE ESTA LINHA AQUI NO HEAD -->
     @vite(['resources/js/app.js'])
 </head>
 
@@ -16,13 +15,28 @@
     <div class="container">
         <header>
             <div class="cabecalho">
-                <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="200" height="auto" alt="Logo" />
-                <nav>
+                <!-- Esquerda: Botão Menu Sanduíche -->
+                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+                    <i class="fa-solid fa-bars" id="menuIcon"></i>
+                </button>
+
+                <!-- Centro: Logo -->
+                <a href="{{ route('home') }}" class="logo-link" aria-label="Página inicial Olhar Que Protege">
+                    <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" class="logo-img" alt="Logo Olhar Que Protege" />
+                </a>
+
+                <!-- Direita: Botão de Pesquisar -->
+                <button type="button" class="search-toggle" id="searchToggle" aria-label="Abrir pesquisa" aria-expanded="false" aria-controls="searchBar">
+                    <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+                </button>
+
+                <!-- Navegação (Menu Sanduíche) -->
+                <nav id="mainNav" class="main-nav">
                     <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
                     <a href="{{ route('sobre') }}" class="{{ request()->routeIs('sobre') ? 'active' : '' }}">Sobre</a>
                     <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
                     <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
-                    
+
                     <!-- Cadastrar-me (Usuário Comum) -->
                     <a href="{{ route('extras.register') }}" class="{{ request()->routeIs('extras.register') ? 'active' : '' }}">
                         Cadastrar-me
@@ -32,33 +46,45 @@
                     <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
                         Entrar
                     </a>
-                    
+
                     <!-- Extras (Usuário Comum) -->
                     <a href="{{ route('extras') }}" class="{{ request()->routeIs('extras') ? 'active' : '' }}">
                         Extras
                     </a>
-                    
+
                     <!-- Página Equipe por último -->
-                    <a href="{{ route('admin.login') }}" class="{{ request()->routeIs('admin.register') ? 'active' : '' }}">
+                    <a href="{{ route('admin.login') }}" class="{{ request()->routeIs('admin.register') || request()->routeIs('admin.login') ? 'active' : '' }}">
                         Equipe
                     </a>
                 </nav>
+
+                <!-- Barra de Pesquisa Expansível -->
+                <form action="{{ route('blog.index') }}" method="GET" class="search-bar" id="searchBar" role="search">
+                    <input type="search" name="q" id="searchInput" class="search-input" placeholder="Buscar no site..." aria-label="Buscar no site" autocomplete="off" />
+                    <button type="submit" class="search-submit" aria-label="Confirmar busca">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
             </div>
         </header>
 
+        <!-- Fundo escuro ao abrir o menu ou a busca -->
+        <div class="nav-backdrop" id="navBackdrop"></div>
+
         <section>
             <div class="cabecalho2">
-                <img src="{{ asset('assets/img/image 5.png') }}" width="60" height="auto" alt="Ícone" />
-                <img src="{{ asset('assets/img/MONITORAR = CUIDAR..png') }}" width="400" height="auto" alt="Monitorar é Cuidar" />
-                <br /><br />
-                <img src="{{ asset('assets/img/Rectangle 7.png') }}" width="600" height="auto" id="retangulo" alt="Destaque" />
+                <div class="titulo-destaque">
+                    <img src="{{ asset('assets/img/image 5.png') }}" class="icone-destaque" alt="Ícone" />
+                    <img src="{{ asset('assets/img/MONITORAR = CUIDAR..png') }}" class="texto-destaque" alt="Monitorar é Cuidar" />
+                </div>
+                <img src="{{ asset('assets/img/Rectangle 7.png') }}" id="retangulo" alt="Destaque" />
             </div>
         </section>
 
         <!-- SEÇÃO DO CARROSSEL MODERNO -->
         <section class="carousel-section">
             <div class="carousel-container" id="mainCarousel">
-                
+
                 <!-- Banners do Carrossel -->
                 <div class="carousel-track">
                     <div class="carousel-slide active">
@@ -87,10 +113,10 @@
                 </div>
 
                 <!-- Botões de Navegação com Ícones Modernos -->
-                <button class="carousel-btn prev" id="prevBtn" aria-label="Anterior">
+                <button type="button" class="carousel-btn prev" id="prevBtn" aria-label="Anterior">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
-                <button class="carousel-btn next" id="nextBtn" aria-label="Próximo">
+                <button type="button" class="carousel-btn next" id="nextBtn" aria-label="Próximo">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
 
@@ -134,6 +160,94 @@
             </div>
         </section>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.getElementById('menuToggle');
+            const mainNav = document.getElementById('mainNav');
+            const menuIcon = document.getElementById('menuIcon');
+
+            const searchToggle = document.getElementById('searchToggle');
+            const searchBar = document.getElementById('searchBar');
+            const searchInput = document.getElementById('searchInput');
+            const searchIcon = document.getElementById('searchIcon');
+
+            const navBackdrop = document.getElementById('navBackdrop');
+
+            function setMenuState(isOpen) {
+                if (!mainNav || !menuToggle) return;
+                mainNav.classList.toggle('open', isOpen);
+                menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+                if (menuIcon) {
+                    menuIcon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+                }
+            }
+
+            function setSearchState(isOpen) {
+                if (!searchBar || !searchToggle) return;
+                searchBar.classList.toggle('open', isOpen);
+                searchToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                searchToggle.setAttribute('aria-label', isOpen ? 'Fechar pesquisa' : 'Abrir pesquisa');
+                if (searchIcon) {
+                    searchIcon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-magnifying-glass';
+                }
+                if (isOpen && searchInput) {
+                    setTimeout(() => searchInput.focus(), 120);
+                }
+            }
+
+            function closeAll() {
+                setMenuState(false);
+                setSearchState(false);
+                if (navBackdrop) navBackdrop.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+
+            function syncBackdrop() {
+                const anyOpen = (mainNav && mainNav.classList.contains('open')) ||
+                                (searchBar && searchBar.classList.contains('open'));
+                if (navBackdrop) navBackdrop.classList.toggle('active', anyOpen);
+                document.body.classList.toggle('menu-open', anyOpen);
+            }
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const nextState = !(mainNav && mainNav.classList.contains('open'));
+                    if (nextState) setSearchState(false);
+                    setMenuState(nextState);
+                    syncBackdrop();
+                });
+            }
+
+            if (searchToggle) {
+                searchToggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const nextState = !(searchBar && searchBar.classList.contains('open'));
+                    if (nextState) setMenuState(false);
+                    setSearchState(nextState);
+                    syncBackdrop();
+                });
+            }
+
+            if (navBackdrop) {
+                navBackdrop.addEventListener('click', closeAll);
+            }
+
+            if (mainNav) {
+                mainNav.querySelectorAll('a').forEach(function (link) {
+                    link.addEventListener('click', closeAll);
+                });
+            }
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeAll();
+                }
+            });
+        });
+    </script>
 
     <script src="{{ asset('js/app.js') }}"></script>
 </body>
