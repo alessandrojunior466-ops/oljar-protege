@@ -100,73 +100,69 @@
 
             @if ($destaque)
                 <!-- Vídeo em Destaque (Card Grande) -->
-                <div class="card-post-grande">
+                <article class="card-post-grande">
+                    <a href="{{ route('videos.show', $destaque->id) }}" class="card-link-overlay" aria-label="Abrir vídeo: {{ $destaque->titulo }}"></a>
+
                     <div class="imagem-post">
-                        <a href="{{ route('videos.show', $destaque->id) }}" style="text-decoration: none; display: block; height: 100%;">
-                            <div class="video-player-container">
-                                @if (filter_var($destaque->arquivo ?? $destaque->url_video, FILTER_VALIDATE_URL))
-                                    <iframe src="{{ $destaque->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
-                                @else
-                                    <video controls preload="metadata">
-                                        <source src="{{ asset('storage/' . $destaque->arquivo) }}#t=0.1" type="video/mp4">
-                                        Seu navegador não suporta a exibição deste vídeo.
-                                    </video>
-                                @endif
-                            </div>
-                        </a>
+                        <div class="video-player-container">
+                            @if (filter_var($destaque->arquivo ?? $destaque->url_video, FILTER_VALIDATE_URL))
+                                <iframe src="{{ $destaque->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
+                            @else
+                                <video controls preload="metadata">
+                                    <source src="{{ asset('storage/' . $destaque->arquivo) }}#t=0.1" type="video/mp4">
+                                    O seu navegador não suporta a exibição deste vídeo.
+                                </video>
+                            @endif
+                        </div>
                     </div>
+
                     <div class="conteudo-post">
                         <span class="post-meta-date">
                             Por {{ $destaque->autor?->name ?? $destaque->autor?->nome ?? 'Administrador' }}
                             {{ $destaque->created_at?->format('d/m/Y') }}
                         </span>
 
-                        <a href="{{ route('videos.show', $destaque->id) }}" style="text-decoration: none; color: inherit;">
-                            <h2>{{ $destaque->titulo }}</h2>
-                        </a>
-
+                        <h2>{{ $destaque->titulo }}</h2>
                         <p>{{ \Illuminate\Support\Str::limit($destaque->descricao, 200) }}</p>
                         <div class="tags-container">
                             <span class="tag-circular">DESTAQUE</span>
                         </div>
                     </div>
-                </div>
+                </article>
             @endif
 
             <!-- Grade de Vídeos Menores -->
             <div class="grade-posts">
                 @forelse($videosFiltrados->skip(1) as $video)
                     <!-- Card de Vídeo Individual -->
-                    <div class="card-post-pequeno">
+                    <article class="card-post-pequeno">
+                        <a href="{{ route('videos.show', $video->id) }}" class="card-link-overlay" aria-label="Abrir vídeo: {{ $video->titulo }}"></a>
+
                         <div class="video-thumb-small">
-                            <a href="{{ route('videos.show', $video->id) }}" style="text-decoration: none; display: block; height: 100%;">
-                                @if (filter_var($video->arquivo ?? $video->url_video, FILTER_VALIDATE_URL))
-                                    <iframe src="{{ $video->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
-                                @else
-                                    <video controls preload="metadata">
-                                        <source src="{{ asset('storage/' . $video->arquivo) }}#t=0.1" type="video/mp4">
-                                        Seu navegador não suporta a exibição deste vídeo.
-                                    </video>
-                                @endif
-                            </a>
+                            @if (filter_var($video->arquivo ?? $video->url_video, FILTER_VALIDATE_URL))
+                                <iframe src="{{ $video->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
+                            @else
+                                <video controls preload="metadata">
+                                    <source src="{{ asset('storage/' . $video->arquivo) }}#t=0.1" type="video/mp4">
+                                    O seu navegador não suporta a exibição deste vídeo.
+                                </video>
+                            @endif
                         </div>
+
                         <div class="conteudo-post-pequeno">
                             <span class="post-meta-small">
                                 Por {{ $video->autor?->name ?? $video->autor?->nome ?? 'Administrador' }}
                                 {{ $video->created_at?->format('d/m/Y') }}
                             </span>
 
-                            <a href="{{ route('videos.show', $video->id) }}" style="text-decoration: none; color: inherit;">
-                                <h3>{{ $video->titulo }}</h3>
-                            </a>
-
+                            <h3>{{ $video->titulo }}</h3>
                             <p>{{ \Illuminate\Support\Str::limit($video->descricao, 120) }}</p>
 
                             <div class="tags-container">
                                 <span class="tag-circular">VÍDEO</span>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 @empty
                     @if (!$destaque)
                         <div class="empty-state-grid">
