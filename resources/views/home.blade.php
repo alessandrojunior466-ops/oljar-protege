@@ -59,8 +59,8 @@
                 </nav>
 
                 <!-- Barra de Pesquisa Expansível -->
-                <form action="{{ route('blog.index') }}" method="GET" class="search-bar" id="searchBar" role="search">
-                    <input type="search" name="q" id="searchInput" class="search-input" placeholder="Buscar no site..." aria-label="Buscar no site" autocomplete="off" />
+                <form action="{{ route('busca') }}" method="GET" class="search-bar" id="searchBar" role="search">
+                    <input type="search" name="q" id="searchInput" class="search-input" value="{{ request('q') }}" placeholder="Buscar no site..." aria-label="Buscar no site" autocomplete="off" />
                     <button type="submit" class="search-submit" aria-label="Confirmar busca">
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>

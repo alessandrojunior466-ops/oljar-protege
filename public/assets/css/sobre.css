@@ -21,15 +21,14 @@ body {
 }
 
 header {
-    height: clamp(92px, 13vw, 130px);
+    height: clamp(135px, 17vw, 175px);
 }
 
 .conteudo-info {
     display: flex;
     flex-direction: column;
     gap: clamp(24px, 4vw, 44px);
-    margin-top: clamp(32px, 5vw, 64px);
-    /* antes: 16px */
+    margin-top: 24px;
 }
 
 .secao-bloco {

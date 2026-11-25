@@ -7,6 +7,7 @@ use App\Http\Controllers\SiteController;
 use App\Http\Controllers\ExtrasAuthController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\BuscaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,10 @@ Route::get('/blog', [SiteController::class, 'blog'])
 
 Route::get('/blog/{id}', [SiteController::class, 'blogShow'])
     ->name('blog.show');
+
+// Busca Global
+Route::get('/buscar', [BuscaController::class, 'index'])
+    ->name('busca');
 
 
 /*
@@ -101,12 +106,6 @@ Route::post('/admin/cadastro', [
     'register'
 ])->name('admin.register.submit');
 
-
-/*
-|--------------------------------------------------------------------------
-| Conteúdos Exclusivos dos Usuários
-|--------------------------------------------------------------------------
-*/
 
 /*
 |--------------------------------------------------------------------------
