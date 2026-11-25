@@ -28,7 +28,8 @@ header {
     display: flex;
     flex-direction: column;
     gap: clamp(24px, 4vw, 44px);
-    margin-top: 16px;
+    margin-top: clamp(32px, 5vw, 64px);
+    /* antes: 16px */
 }
 
 .secao-bloco {
