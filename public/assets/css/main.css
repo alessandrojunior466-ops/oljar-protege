@@ -264,8 +264,10 @@ header {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-top: clamp(16px, 4vw, 40px);
-    margin-bottom: clamp(20px, 3vw, 32px);
+    margin-top: clamp(48px, 7vw, 84px);
+    /* desce mais o bloco MONITORAR = CUIDAR. */
+    margin-bottom: clamp(8px, 1.5vw, 16px);
+    /* reduz o espaço abaixo da linha */
     gap: clamp(14px, 2.5vw, 24px);
 }
 
@@ -297,8 +299,9 @@ header {
 
 /* --- CARROSSEL MODERNO --- */
 .carousel-section {
-    padding: clamp(10px, 2vw, 20px) 0;
-    margin: clamp(12px, 2vw, 20px) auto clamp(24px, 4vw, 40px) auto;
+    padding: clamp(6px, 1.2vw, 12px) 0;
+    margin: clamp(4px, 0.8vw, 8px) auto clamp(24px, 4vw, 40px) auto;
+    /* aproxima os slides de cima */
 }
 
 .carousel-container {
