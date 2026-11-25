@@ -116,7 +116,6 @@ Route::post('/admin/cadastro', [
 Route::middleware('auth')->group(function () {
 
     Route::get('/extras', function (Request $request) {
-
         $usuario = $request->user();
 
         abort_unless(
@@ -125,9 +124,10 @@ Route::middleware('auth')->group(function () {
             'Você não tem permissão para acessar esta área.'
         );
 
-        return view('extras'); // Corrigido de 'profile.extras' para 'extras'
+        return view('extras');
     })->name('extras');
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -175,7 +175,6 @@ Route::prefix('admin')
             SiteController::class,
             'destroy'
         ])->name('blog.delete');
-
 
         // Dashboard Vídeos (em /admin/dashboard/videos)
         Route::get('/dashboard/videos', [
@@ -228,13 +227,13 @@ Route::middleware('auth')->group(function () {
         'destroy'
     ])->name('profile.destroy');
 
-    // Rota para atualização de palavra-passe do perfil (corrige o erro route('password.update'))
+    // Rota para atualização de senha do perfil
     Route::put('/password', [
         PasswordController::class,
         'update'
     ])->name('password.update');
 
-    // Rota de logout genérico para compatibilidade de visualizações do Breeze
+    // Rota de logout genérico para compatibilidade de visualizações
     Route::post('/logout', [
         ExtrasAuthController::class,
         'logout'
@@ -244,7 +243,7 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Autenticação Padrão do Laravel Breeze (Desativada para evitar conflitos)
+| Autenticação Padrão (Desativada para evitar conflitos)
 |--------------------------------------------------------------------------
 */
 

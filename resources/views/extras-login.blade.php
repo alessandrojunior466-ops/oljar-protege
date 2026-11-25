@@ -8,6 +8,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    @vite(['resources/js/firebase-auth.js'])
+
     <style>
         * {
             box-sizing: border-box;
@@ -112,6 +114,106 @@
             transform: translateY(-1px);
         }
 
+        .button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-google {
+            width: 100%;
+            border: 1px solid #dedff0;
+            border-radius: 11px;
+            padding: 13px 16px;
+            background: #ffffff;
+            color: #343456;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .button-google:hover {
+            background: #f7f7fc;
+            border-color: #898ac4;
+        }
+
+        .button-google:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .phone-box {
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 14px;
+            background: #f8f8fd;
+            border: 1px solid #dedff0;
+        }
+
+        .phone-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #343456;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .button-secondary {
+            width: 100%;
+            border: 1px solid #898ac4;
+            border-radius: 11px;
+            padding: 12px 14px;
+            background: #ffffff;
+            color: #7776bd;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .button-secondary:hover {
+            background: #f0effc;
+        }
+
+        .button-secondary:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .sms-step {
+            display: none;
+            margin-top: 14px;
+        }
+
+        .sms-step.active {
+            display: block;
+        }
+
+        .divider {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #8e8ea6;
+            margin: 16px 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         .errors {
             padding: 13px;
             border-radius: 10px;
@@ -120,6 +222,27 @@
             font-size: 12px;
             line-height: 1.7;
             margin-bottom: 20px;
+        }
+
+        .status-box {
+            display: none;
+            padding: 13px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .status-box.error {
+            display: block;
+            background: #fff0f0;
+            color: #a52b3a;
+        }
+
+        .status-box.success {
+            display: block;
+            background: #eefaf3;
+            color: #1f6f43;
         }
 
         .footer {
@@ -163,11 +286,10 @@
         >
 
         <p class="tag">Bem-vindo de volta</p>
-        <h1>Que bom ter você aqui!</h1>
+        <h1>Entrar na conta</h1>
 
         <p class="description">
-            Entre na sua conta para continuar acessando
-            os conteúdos exclusivos do Olhar Que Protege.
+            Acesse sua conta com e-mail e senha, Google ou SMS.
         </p>
 
         @if ($errors->any())
@@ -178,8 +300,13 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('extras.login.submit') }}">
+        <div id="firebase-status" class="status-box" role="alert"></div>
+
+        <form id="login-form" method="POST" action="{{ route('extras.login.submit') }}">
             @csrf
+            <input type="hidden" id="firebase_token" name="firebase_token">
+            <input type="hidden" id="google_name" name="name">
+            <input type="hidden" id="verified_phone" name="phone_number">
 
             <div class="field">
                 <label for="email">E-mail</label>
@@ -206,20 +333,244 @@
                 >
             </div>
 
-            <button class="button" type="submit">
-                Entrar na minha conta
+            <button id="btn-login" class="button" type="submit">
+                Entrar
             </button>
+
+            <div class="divider">ou</div>
+
+            <button id="btn-google" class="button-google" type="button">
+                <img
+                    src="{{ asset('assets/img/logogoogle.png') }}"
+                    alt="Google"
+                    class="google-icon"
+                >
+                <span>Entrar com Google</span>
+            </button>
+
+            <div class="phone-box">
+                <div class="phone-title">Entrar com SMS</div>
+
+                <div class="field" style="margin-bottom: 12px;">
+                    <label for="phone_input">Telefone (formato E.164)</label>
+                    <input
+                        id="phone_input"
+                        type="tel"
+                        value="+5514999990001"
+                        placeholder="+5514999990001"
+                    >
+                </div>
+
+                <button id="btn-send-sms" class="button-secondary" type="button">
+                    Enviar código SMS
+                </button>
+
+                <div id="sms-step" class="sms-step">
+                    <div class="field" style="margin-bottom: 12px;">
+                        <label for="sms_code">Código de 6 dígitos (teste: 123456)</label>
+                        <input
+                            id="sms_code"
+                            type="text"
+                            maxlength="6"
+                            placeholder="123456"
+                        >
+                    </div>
+
+                    <button id="btn-verify-sms" class="button" type="button">
+                        Confirmar código e entrar
+                    </button>
+                </div>
+
+                <div id="recaptcha-container"></div>
+            </div>
         </form>
 
         <div class="footer">
             Ainda não tem uma conta?
-            <a href="{{ route('extras.register') }}">Cadastre-se</a>
+            <a href="{{ route('extras.register') }}">Criar conta</a>
         </div>
 
         <a href="{{ route('home') }}" class="back">
             ← Voltar para a página inicial
         </a>
     </main>
+
+    <script type="module">
+        const form = document.getElementById("login-form");
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const tokenInput = document.getElementById("firebase_token");
+        const googleNameInput = document.getElementById("google_name");
+        const verifiedPhoneInput = document.getElementById("verified_phone");
+
+        const phoneInput = document.getElementById("phone_input");
+        const smsStep = document.getElementById("sms-step");
+        const smsCodeInput = document.getElementById("sms_code");
+
+        const btnLogin = document.getElementById("btn-login");
+        const btnGoogle = document.getElementById("btn-google");
+        const btnSendSms = document.getElementById("btn-send-sms");
+        const btnVerifySms = document.getElementById("btn-verify-sms");
+        const statusBox = document.getElementById("firebase-status");
+
+        function mostrarStatus(mensagem, tipo = "error") {
+            statusBox.textContent = mensagem;
+            statusBox.className = `status-box ${tipo}`;
+        }
+
+        function setBotoesDesabilitados(desabilitar) {
+            btnLogin.disabled = desabilitar;
+            btnGoogle.disabled = desabilitar;
+            btnSendSms.disabled = desabilitar;
+            btnVerifySms.disabled = desabilitar;
+        }
+
+        function liberarCamposParaFirebase() {
+            emailInput.removeAttribute("required");
+            passwordInput.removeAttribute("required");
+        }
+
+        function traduzirErroFirebase(code) {
+            switch (code) {
+                case "auth/invalid-credential":
+                case "auth/user-not-found":
+                case "auth/wrong-password":
+                    return "E-mail ou senha inválidos.";
+                case "auth/invalid-email":
+                    return "Formato de e-mail inválido.";
+                case "auth/invalid-phone-number":
+                    return "Número de telefone inválido. Use o formato +5514999990001.";
+                case "auth/invalid-verification-code":
+                    return "Código SMS inválido. Para o número de teste, use 123456.";
+                case "auth/too-many-requests":
+                    return "Muitas tentativas. Aguarde um pouco e tente novamente.";
+                case "auth/popup-closed-by-user":
+                    return "A janela de login do Google foi fechada antes de concluir.";
+                case "auth/popup-blocked":
+                    return "O navegador bloqueou o pop-up do Google. Permita pop-ups para este site.";
+                default:
+                    return `Erro ao entrar (${code || "desconhecido"}).`;
+            }
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (!window.firebaseAuth) {
+                mostrarStatus("Aguarde a inicialização do serviço de autenticação...", "error");
+                return;
+            }
+
+            const { entrarComEmail } = window.firebaseAuth;
+            const email = emailInput.value.trim();
+            const senha = passwordInput.value;
+
+            setBotoesDesabilitados(true);
+            mostrarStatus("Verificando seu e-mail e senha...", "success");
+
+            try {
+                const user = await entrarComEmail(email, senha);
+                tokenInput.value = await user.getIdToken();
+                mostrarStatus("Login realizado! Redirecionando para /extras...", "success");
+
+                form.submit();
+            } catch (error) {
+                mostrarStatus(traduzirErroFirebase(error.code), "error");
+                setBotoesDesabilitados(false);
+            }
+        });
+
+        btnGoogle.addEventListener("click", async () => {
+            if (!window.firebaseAuth) {
+                mostrarStatus("Aguarde a inicialização do serviço de autenticação...", "error");
+                return;
+            }
+
+            const { entrarComGoogle } = window.firebaseAuth;
+
+            setBotoesDesabilitados(true);
+            mostrarStatus("Conectando com o Google...", "success");
+
+            try {
+                const user = await entrarComGoogle();
+
+                if (user.email) {
+                    emailInput.value = user.email;
+                }
+                if (user.displayName) {
+                    googleNameInput.value = user.displayName;
+                }
+
+                liberarCamposParaFirebase();
+                tokenInput.value = await user.getIdToken();
+                mostrarStatus("Autenticado com o Google! Redirecionando para /extras...", "success");
+
+                form.submit();
+            } catch (error) {
+                mostrarStatus(traduzirErroFirebase(error.code), "error");
+                setBotoesDesabilitados(false);
+            }
+        });
+
+        btnSendSms.addEventListener("click", async () => {
+            if (!window.firebaseAuth) {
+                mostrarStatus("Aguarde a inicialização do serviço de autenticação...", "error");
+                return;
+            }
+
+            const telefone = phoneInput.value.trim();
+            if (!telefone.startsWith("+")) {
+                mostrarStatus("Informe o telefone com DDI, ex: +5514999990001.", "error");
+                return;
+            }
+
+            const { enviarCodigoTelefone } = window.firebaseAuth;
+
+            setBotoesDesabilitados(true);
+            mostrarStatus("Enviando código SMS...", "success");
+
+            try {
+                await enviarCodigoTelefone(telefone, "recaptcha-container");
+                smsStep.classList.add("active");
+                mostrarStatus("Código enviado! Para o número de teste, digite 123456.", "success");
+            } catch (error) {
+                mostrarStatus(traduzirErroFirebase(error.code) || error.message, "error");
+            } finally {
+                setBotoesDesabilitados(false);
+            }
+        });
+
+        btnVerifySms.addEventListener("click", async () => {
+            if (!window.firebaseAuth) {
+                mostrarStatus("Aguarde a inicialização do serviço de autenticação...", "error");
+                return;
+            }
+
+            const codigo = smsCodeInput.value.trim();
+            if (codigo.length < 6) {
+                mostrarStatus("Digite o código de 6 dígitos.", "error");
+                return;
+            }
+
+            const { confirmarCodigoTelefone } = window.firebaseAuth;
+
+            setBotoesDesabilitados(true);
+            mostrarStatus("Confirmando código SMS...", "success");
+
+            try {
+                const user = await confirmarCodigoTelefone(codigo);
+                verifiedPhoneInput.value = user.phoneNumber || phoneInput.value.trim();
+                tokenInput.value = await user.getIdToken();
+
+                liberarCamposParaFirebase();
+                mostrarStatus("Telefone verificado! Redirecionando para /extras...", "success");
+
+                form.submit();
+            } catch (error) {
+                mostrarStatus(traduzirErroFirebase(error.code) || error.message, "error");
+                setBotoesDesabilitados(false);
+            }
+        });
+    </script>
 </body>
 </html>
-```
