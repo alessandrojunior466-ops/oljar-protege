@@ -204,6 +204,13 @@
             display: block;
         }
 
+        #recaptcha-container {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+
         .divider {
             text-align: center;
             font-size: 11px;
@@ -367,7 +374,7 @@
 
                 <div id="sms-step" class="sms-step">
                     <div class="field" style="margin-bottom: 12px;">
-                        <label for="sms_code">Código de 6 dígitos (teste: 123456)</label>
+                        <label for="sms_code">Código de 6 dígitos</label>
                         <input
                             id="sms_code"
                             type="text"
@@ -530,7 +537,7 @@
             mostrarStatus("Enviando código SMS...", "success");
 
             try {
-                await enviarCodigoTelefone(telefone, "recaptcha-container");
+                await enviarCodigoTelefone(telefone, "recaptcha-container", false);
                 smsStep.classList.add("active");
                 mostrarStatus("Código enviado! Para o número de teste, digite 123456.", "success");
             } catch (error) {

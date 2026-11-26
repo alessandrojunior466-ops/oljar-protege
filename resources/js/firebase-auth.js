@@ -48,17 +48,18 @@ export async function entrarComGoogle() {
   return credencial.user;
 }
 
-export function prepararRecaptcha(containerId = "recaptcha-container", invisivel = true) {
+export async function prepararRecaptcha(containerId = "recaptcha-container", invisivel = false) {
   if (!recaptchaVerifier) {
     recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
       size: invisivel ? "invisible" : "normal",
     });
+    await recaptchaVerifier.render();
   }
   return recaptchaVerifier;
 }
 
-export async function enviarCodigoTelefone(telefoneE164, containerId = "recaptcha-container") {
-  const verifier = prepararRecaptcha(containerId, true);
+export async function enviarCodigoTelefone(telefoneE164, containerId = "recaptcha-container", invisivel = false) {
+  const verifier = await prepararRecaptcha(containerId, invisivel);
   confirmationResultGlobal = await signInWithPhoneNumber(auth, telefoneE164, verifier);
   return confirmationResultGlobal;
 }
