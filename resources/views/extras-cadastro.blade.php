@@ -482,7 +482,7 @@
                 case "auth/invalid-phone-number":
                     return "Número de telefone inválido. Use o formato +5514999990001.";
                 case "auth/invalid-verification-code":
-                    return "Código SMS inválido. Para o número de teste, use 123456.";
+                    return "Código SMS inválido.";
                 case "auth/too-many-requests":
                     return "Muitas tentativas. Aguarde um pouco e tente novamente.";
                 case "auth/popup-closed-by-user":
@@ -581,7 +581,7 @@
             try {
                 await enviarCodigoTelefone(telefone, "recaptcha-container", false);
                 smsStep.classList.add("active");
-                mostrarStatus("Código enviado! Para o número de teste, digite 123456.", "success");
+                mostrarStatus("Código enviado!", "success");
             } catch (error) {
                 mostrarStatus(traduzirErroFirebase(error.code) || error.message, "error");
             } finally {
