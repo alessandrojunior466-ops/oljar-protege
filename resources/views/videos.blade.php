@@ -86,24 +86,78 @@
 
                 $destaque = $videosFiltrados->first();
 
-                $resolverMidiaVideo = function ($video) {
-                    $candidata = $video->youtube_url ?? $video->url_video ?? $video->arquivo ?? null;
+                $extrairUrls = function (?string $texto): array {
+                    if (!$texto) {
+                        return [];
+                    }
+                    preg_match_all('/https?:\/\/[^\s,]+/i', $texto, $matches);
+                    $brutas = $matches[0] ?? [];
+                    if (empty($brutas)) {
+                        $brutas = preg_split('/[\r\n,]+/', $texto) ?: [];
+                    }
+                    $limpas = [];
+                    foreach ($brutas as $u) {
+                        $uClean = trim($u, " \t\n\r\0\x0B\"'(),;");
+                        if ($uClean !== '' && filter_var($uClean, FILTER_VALIDATE_URL)) {
+                            $limpas[] = $uClean;
+                        }
+                    }
+                    return array_values(array_unique($limpas));
+                };
+
+                $resolverMidiaVideo = function ($video) use ($extrairUrls) {
+                    $candidatas = [];
+                    foreach ([$video->youtube_url ?? null, $video->url_video ?? null, $video->arquivo ?? null] as $campo) {
+                        if (!empty($campo)) {
+                            foreach ($extrairUrls((string) $campo) as $u) {
+                                $candidatas[] = $u;
+                            }
+                            foreach (preg_split('/[\r\n,]+/', (string) $campo) as $bruto) {
+                                $bruto = trim($bruto);
+                                if ($bruto !== '' && !str_starts_with($bruto, 'http')) {
+                                    $candidatas[] = $bruto;
+                                }
+                            }
+                        }
+                    }
+                    if (is_array($video->midias ?? null)) {
+                        foreach ($video->midias as $mItem) {
+                            if (is_string($mItem) && trim($mItem) !== '') {
+                                $candidatas[] = trim($mItem);
+                            }
+                        }
+                    }
+                    $candidatas = array_values(array_unique($candidatas));
+
                     $ytId = null;
-                    if (!empty($candidata) && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', (string) $candidata, $m)) {
-                        $ytId = $m[1];
+                    $listId = null;
+                    $arquivoLocal = null;
+
+                    foreach ($candidatas as $item) {
+                        if (!$ytId && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', $item, $mVid)) {
+                            $ytId = $mVid[1];
+                        }
+                        if (!$listId && preg_match('/[?&]list=([A-Za-z0-9_-]+)/', $item, $mList)) {
+                            $listId = $mList[1];
+                        }
+                        if (!$arquivoLocal && !str_starts_with($item, 'http')) {
+                            $arquivoLocal = asset('storage/' . $item) . '#t=0.1';
+                        }
                     }
 
-                    $thumb = !empty($video->thumbnail_url)
-                        ? $video->thumbnail_url
-                        : ($ytId ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg" : null);
+                    $thumbsInformadas = $extrairUrls($video->thumbnail_url ?? null);
+                    $thumb = $thumbsInformadas[0] ?? ($ytId ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg" : null);
 
-                    $embedUrl = $ytId ? "https://www.youtube-nocookie.com/embed/{$ytId}" : null;
+                    $embedUrl = null;
+                    if ($listId && $ytId) {
+                        $embedUrl = "https://www.youtube-nocookie.com/embed/{$ytId}?list=" . urlencode($listId);
+                    } elseif ($listId) {
+                        $embedUrl = "https://www.youtube-nocookie.com/embed/videoseries?list=" . urlencode($listId);
+                    } elseif ($ytId) {
+                        $embedUrl = "https://www.youtube-nocookie.com/embed/{$ytId}";
+                    }
 
-                    $arquivoLocal = (!$ytId && !empty($video->arquivo) && !str_starts_with((string) $video->arquivo, 'http'))
-                        ? asset('storage/' . $video->arquivo) . '#t=0.1'
-                        : null;
-
-                    return compact('ytId', 'thumb', 'embedUrl', 'arquivoLocal');
+                    return compact('ytId', 'listId', 'thumb', 'embedUrl', 'arquivoLocal');
                 };
             @endphp
 
@@ -123,9 +177,23 @@
                         <div class="video-player-container">
                             @if ($mDest['thumb'])
                                 <div class="video-thumb-media">
-                                    <img src="{{ $mDest['thumb'] }}" alt="{{ $destaque->titulo }}">
+                                    <img
+                                        src="{{ $mDest['thumb'] }}"
+                                        alt="{{ $destaque->titulo }}"
+                                        onerror="const wrap = this.closest('.video-thumb-media'); if (wrap) wrap.style.display = 'none'; const parent = this.closest('.video-player-container'); const iframe = parent && parent.querySelector('iframe.fallback-embed'); if (iframe) iframe.style.display = 'block';"
+                                    >
                                     <span class="video-play-badge"><i class="fa-solid fa-play"></i></span>
                                 </div>
+                                @if ($mDest['embedUrl'])
+                                    <iframe
+                                        src="{{ $mDest['embedUrl'] }}"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        referrerpolicy="strict-origin-when-cross-origin"
+                                        allowfullscreen
+                                        class="video-iframe fallback-embed"
+                                        style="display: none;"
+                                    ></iframe>
+                                @endif
                             @elseif ($mDest['embedUrl'])
                                 <iframe
                                     src="{{ $mDest['embedUrl'] }}"
@@ -167,7 +235,11 @@
                         <div class="video-thumb-small">
                             <div class="video-thumb-media">
                                 @if ($mVid['thumb'])
-                                    <img src="{{ $mVid['thumb'] }}" alt="{{ $video->titulo }}">
+                                    <img
+                                        src="{{ $mVid['thumb'] }}"
+                                        alt="{{ $video->titulo }}"
+                                        onerror="const wrap = this.closest('.video-thumb-media'); if (wrap) wrap.style.display = 'none'; const parent = this.closest('.video-thumb-small'); const iframe = parent && parent.querySelector('iframe.fallback-embed'); if (iframe) iframe.style.display = 'block';"
+                                    >
                                     <span class="video-play-badge"><i class="fa-solid fa-play"></i></span>
                                 @elseif ($mVid['embedUrl'])
                                     <iframe
@@ -182,6 +254,16 @@
                                     </video>
                                 @endif
                             </div>
+                            @if ($mVid['thumb'] && $mVid['embedUrl'])
+                                <iframe
+                                    src="{{ $mVid['embedUrl'] }}"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen
+                                    class="fallback-embed"
+                                    style="display: none;"
+                                ></iframe>
+                            @endif
                         </div>
 
                         <div class="conteudo-post-pequeno">
