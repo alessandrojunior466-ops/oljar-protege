@@ -11,44 +11,29 @@ use Illuminate\Support\Facades\Schema;
 
 class SiteController extends Controller
 {
-    /**
-     * 1. PÁGINA INICIAL (HOME)
-     */
     public function index()
     {
         $posts = Blog::with('autor')->latest()->get();
         return view('home', compact('posts'));
     }
 
-    /**
-     * 2. PÁGINA SOBRE
-     */
     public function sobre()
     {
         return view('sobre');
     }
 
-    /**
-     * 3. PÁGINA DE VÍDEOS (PÚBLICA)
-     */
     public function videos()
     {
         $videos = Video::with('autor')->latest()->get();
         return view('videos', compact('videos'));
     }
 
-    /**
-     * 3.1 EXIBIR VÍDEO INDIVIDUAL (SHOW)
-     */
     public function videosShow($id)
     {
         $video = Video::with('autor')->findOrFail($id);
         return view('videos-show', compact('video'));
     }
 
-    /**
-     * 4. PÁGINA DO BLOG
-     */
     public function blog()
     {
         $posts = Blog::with('autor')->latest()->get();
@@ -58,18 +43,12 @@ class SiteController extends Controller
         return view('blog', compact('destaque', 'restante', 'posts'));
     }
 
-    /**
-     * 4.1 EXIBIR NOTÍCIA INDIVIDUAL (SHOW)
-     */
     public function blogShow($id)
     {
         $post = Blog::with('autor')->findOrFail($id);
         return view('blog-show', compact('post'));
     }
 
-    /**
-     * 5. DASHBOARD - GERENCIAR BLOG
-     */
     public function dashboard()
     {
         $publicacoes = Blog::with('autor')->latest()->get();
@@ -78,9 +57,6 @@ class SiteController extends Controller
         return view('admin-dashboard', compact('publicacoes', 'postEdicao'));
     }
 
-    /**
-     * 5.1 DASHBOARD - GERENCIAR VÍDEOS
-     */
     public function dashboardVideos()
     {
         $videos = Video::with('autor')->latest()->get();
@@ -100,9 +76,43 @@ class SiteController extends Controller
         return null;
     }
 
-    /**
-     * 6. SALVAR NOVA PUBLICAÇÃO (STORE)
-     */
+    private function extrairPlaylistId(?string $url): ?string
+    {
+        if (!$url) {
+            return null;
+        }
+        if (preg_match('/[?&]list=([A-Za-z0-9_-]+)/', $url, $m)) {
+            return $m[1];
+        }
+        return null;
+    }
+
+    private function parseUrls(?string $texto): array
+    {
+        if (!$texto) {
+            return [];
+        }
+
+        // Extrai todas as URLs http/https mesmo separadas por vírgula, espaço, quebra de linha ou coladas
+        preg_match_all('/https?:\/\/[^\s,]+/i', $texto, $matches);
+        $candidatas = $matches[0] ?? [];
+
+        if (empty($candidatas)) {
+            $partes = preg_split('/[\r\n,]+/', $texto);
+            $candidatas = is_array($partes) ? $partes : [];
+        }
+
+        $urls = [];
+        foreach ($candidatas as $parte) {
+            $limpo = trim($parte, " \t\n\r\0\x0B\"'(),;");
+            if ($limpo !== '' && filter_var($limpo, FILTER_VALIDATE_URL)) {
+                $urls[] = $limpo;
+            }
+        }
+
+        return array_values(array_unique($urls));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -110,12 +120,14 @@ class SiteController extends Controller
             'conteudo'    => 'required|string',
             'imagem'      => 'nullable',
             'imagem.*'    => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'imagem_url'  => 'nullable|url|max:2000',
-            'youtube_url' => 'nullable|url|max:2000',
+            'imagem_url'  => 'nullable|string|max:4000',
+            'youtube_url' => 'nullable|string|max:4000',
         ]);
 
-        $midias = [];
+        $urlsImagem = $this->parseUrls($request->input('imagem_url'));
+        $urlsVideo  = $this->parseUrls($request->input('youtube_url'));
 
+        $midias = [];
         if ($request->hasFile('imagem')) {
             $arquivos = is_array($request->file('imagem')) ? $request->file('imagem') : [$request->file('imagem')];
             foreach ($arquivos as $arq) {
@@ -125,13 +137,13 @@ class SiteController extends Controller
             }
         }
 
-        if ($request->filled('imagem_url')) {
-            $midias[] = $request->imagem_url;
+        foreach ($urlsImagem as $uImg) {
+            $midias[] = $uImg;
         }
-
-        if ($request->filled('youtube_url')) {
-            $midias[] = $request->youtube_url;
+        foreach ($urlsVideo as $uVid) {
+            $midias[] = $uVid;
         }
+        $midias = array_values(array_unique($midias));
 
         $imagemPrincipal = $midias[0] ?? null;
 
@@ -143,7 +155,7 @@ class SiteController extends Controller
         ];
 
         if (Schema::hasColumn('blogs', 'youtube_url')) {
-            $dados['youtube_url'] = $request->filled('youtube_url') ? $request->youtube_url : null;
+            $dados['youtube_url'] = !empty($urlsVideo) ? implode("\n", $urlsVideo) : null;
         }
 
         if (Schema::hasColumn('blogs', 'midias')) {
@@ -155,9 +167,6 @@ class SiteController extends Controller
         return redirect()->route('dashboard')->with('success', 'Publicação criada com sucesso!');
     }
 
-    /**
-     * 7. CARREGAR PUBLICAÇÃO PARA EDIÇÃO (EDIT)
-     */
     public function edit($id)
     {
         $publicacoes = Blog::with('autor')->latest()->get();
@@ -166,9 +175,6 @@ class SiteController extends Controller
         return view('admin-dashboard', compact('publicacoes', 'postEdicao'));
     }
 
-    /**
-     * 8. ATUALIZAR PUBLICAÇÃO (UPDATE)
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -176,11 +182,14 @@ class SiteController extends Controller
             'conteudo'    => 'required|string',
             'imagem'      => 'nullable',
             'imagem.*'    => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'imagem_url'  => 'nullable|url|max:2000',
-            'youtube_url' => 'nullable|url|max:2000',
+            'imagem_url'  => 'nullable|string|max:4000',
+            'youtube_url' => 'nullable|string|max:4000',
         ]);
 
         $post = Blog::findOrFail($id);
+        $urlsImagem = $this->parseUrls($request->input('imagem_url'));
+        $urlsVideo  = $this->parseUrls($request->input('youtube_url'));
+
         $midiasAtuais = is_array($post->midias) ? $post->midias : ($post->imagem ? [$post->imagem] : []);
         $novasMidias = [];
 
@@ -193,8 +202,8 @@ class SiteController extends Controller
             }
         }
 
-        if ($request->filled('imagem_url')) {
-            $novasMidias[] = $request->imagem_url;
+        foreach ($urlsImagem as $uImg) {
+            $novasMidias[] = $uImg;
         }
 
         if (!empty($novasMidias)) {
@@ -202,13 +211,12 @@ class SiteController extends Controller
             $midiasAtuais = array_values(array_unique(array_merge($midiasAtuais, $novasMidias)));
         }
 
-        if ($request->filled('youtube_url')) {
-            $midiasAtuais[] = $request->youtube_url;
-            $midiasAtuais = array_values(array_unique($midiasAtuais));
+        if (!empty($urlsVideo)) {
+            $midiasAtuais = array_values(array_unique(array_merge($midiasAtuais, $urlsVideo)));
         }
 
         if (Schema::hasColumn('blogs', 'youtube_url')) {
-            $post->youtube_url = $request->filled('youtube_url') ? $request->youtube_url : null;
+            $post->youtube_url = !empty($urlsVideo) ? implode("\n", $urlsVideo) : null;
         }
 
         if (Schema::hasColumn('blogs', 'midias')) {
@@ -222,9 +230,6 @@ class SiteController extends Controller
         return redirect()->route('dashboard')->with('success', 'Publicação atualizada com sucesso!');
     }
 
-    /**
-     * 9. EXCLUIR PUBLICAÇÃO (DESTROY)
-     */
     public function destroy($id)
     {
         $post = Blog::findOrFail($id);
@@ -246,9 +251,6 @@ class SiteController extends Controller
         return redirect()->route('dashboard')->with('success', 'Publicação excluída com sucesso!');
     }
 
-    /**
-     * 10. SALVAR NOVO VÍDEO (VIDEO STORE)
-     */
     public function videoStore(Request $request)
     {
         $request->validate([
@@ -256,12 +258,14 @@ class SiteController extends Controller
             'descricao'     => 'required|string',
             'video'         => 'nullable|required_without:youtube_url',
             'video.*'       => 'file|mimes:mp4,mov,avi,mkv,webm|max:102400',
-            'youtube_url'   => 'nullable|required_without:video|url|max:2000',
-            'thumbnail_url' => 'nullable|url|max:2000',
+            'youtube_url'   => 'nullable|required_without:video|string|max:4000',
+            'thumbnail_url' => 'nullable|string|max:4000',
         ]);
 
-        $itensVideo = [];
+        $urlsVideo  = $this->parseUrls($request->input('youtube_url'));
+        $urlsThumbs = $this->parseUrls($request->input('thumbnail_url'));
 
+        $itensVideo = [];
         if ($request->hasFile('video')) {
             $arquivos = is_array($request->file('video')) ? $request->file('video') : [$request->file('video')];
             foreach ($arquivos as $arq) {
@@ -271,17 +275,20 @@ class SiteController extends Controller
             }
         }
 
-        if ($request->filled('youtube_url')) {
-            $itensVideo[] = $request->youtube_url;
+        foreach ($urlsVideo as $uVid) {
+            $itensVideo[] = $uVid;
         }
 
         $arquivoPrincipal = $itensVideo[0] ?? null;
-        $thumbFinal = $request->filled('thumbnail_url') ? $request->thumbnail_url : null;
+        $thumbFinal = !empty($urlsThumbs) ? implode("\n", $urlsThumbs) : null;
 
-        if (!$thumbFinal && $request->filled('youtube_url')) {
-            $ytId = $this->extrairYoutubeId($request->youtube_url);
-            if ($ytId) {
-                $thumbFinal = "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg";
+        if (!$thumbFinal && !empty($urlsVideo)) {
+            foreach ($urlsVideo as $uVid) {
+                $ytId = $this->extrairYoutubeId($uVid);
+                if ($ytId) {
+                    $thumbFinal = "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg";
+                    break;
+                }
             }
         }
 
@@ -293,7 +300,7 @@ class SiteController extends Controller
         ];
 
         if (Schema::hasColumn('videos', 'youtube_url')) {
-            $dados['youtube_url'] = $request->filled('youtube_url') ? $request->youtube_url : null;
+            $dados['youtube_url'] = !empty($urlsVideo) ? implode("\n", $urlsVideo) : null;
         }
 
         if (Schema::hasColumn('videos', 'thumbnail_url')) {
@@ -306,12 +313,9 @@ class SiteController extends Controller
 
         Video::create($dados);
 
-        return redirect()->route('dashboard.videos')->with('success', 'Vídeo enviado com sucesso!');
+        return redirect()->route('dashboard.videos')->with('success', 'Vídeo(s) / playlist enviado(s) com sucesso!');
     }
 
-    /**
-     * 10.1 CARREGAR VÍDEO PARA EDIÇÃO
-     */
     public function videoEdit($id)
     {
         $videos = Video::with('autor')->latest()->get();
@@ -320,9 +324,6 @@ class SiteController extends Controller
         return view('admin-dashboard-videos', compact('videos', 'videoEdicao'));
     }
 
-    /**
-     * 10.2 ATUALIZAR VÍDEO
-     */
     public function videoUpdate(Request $request, $id)
     {
         $request->validate([
@@ -330,11 +331,14 @@ class SiteController extends Controller
             'descricao'     => 'required|string',
             'video'         => 'nullable',
             'video.*'       => 'file|mimes:mp4,mov,avi,mkv,webm|max:102400',
-            'youtube_url'   => 'nullable|url|max:2000',
-            'thumbnail_url' => 'nullable|url|max:2000',
+            'youtube_url'   => 'nullable|string|max:4000',
+            'thumbnail_url' => 'nullable|string|max:4000',
         ]);
 
         $video = Video::findOrFail($id);
+        $urlsVideo  = $this->parseUrls($request->input('youtube_url'));
+        $urlsThumbs = $this->parseUrls($request->input('thumbnail_url'));
+
         $midiasAtuais = is_array($video->midias) ? $video->midias : ($video->arquivo ? [$video->arquivo] : []);
         $novosItens = [];
 
@@ -347,8 +351,8 @@ class SiteController extends Controller
             }
         }
 
-        if ($request->filled('youtube_url')) {
-            $novosItens[] = $request->youtube_url;
+        foreach ($urlsVideo as $uVid) {
+            $novosItens[] = $uVid;
         }
 
         if (!empty($novosItens)) {
@@ -356,19 +360,22 @@ class SiteController extends Controller
             $midiasAtuais = array_values(array_unique(array_merge($midiasAtuais, $novosItens)));
         }
 
-        if ($request->filled('thumbnail_url')) {
+        if (!empty($urlsThumbs)) {
             if (Schema::hasColumn('videos', 'thumbnail_url')) {
-                $video->thumbnail_url = $request->thumbnail_url;
+                $video->thumbnail_url = implode("\n", $urlsThumbs);
             }
-        } elseif ($request->filled('youtube_url') && Schema::hasColumn('videos', 'thumbnail_url') && empty($video->thumbnail_url)) {
-            $ytId = $this->extrairYoutubeId($request->youtube_url);
-            if ($ytId) {
-                $video->thumbnail_url = "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg";
+        } elseif (!empty($urlsVideo) && Schema::hasColumn('videos', 'thumbnail_url') && empty($video->thumbnail_url)) {
+            foreach ($urlsVideo as $uVid) {
+                $ytId = $this->extrairYoutubeId($uVid);
+                if ($ytId) {
+                    $video->thumbnail_url = "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg";
+                    break;
+                }
             }
         }
 
         if (Schema::hasColumn('videos', 'youtube_url')) {
-            $video->youtube_url = $request->filled('youtube_url') ? $request->youtube_url : null;
+            $video->youtube_url = !empty($urlsVideo) ? implode("\n", $urlsVideo) : null;
         }
 
         if (Schema::hasColumn('videos', 'midias')) {
@@ -379,12 +386,9 @@ class SiteController extends Controller
         $video->descricao = $request->descricao;
         $video->save();
 
-        return redirect()->route('dashboard.videos')->with('success', 'Vídeo atualizado com sucesso!');
+        return redirect()->route('dashboard.videos')->with('success', 'Vídeo(s) / playlist atualizado(s) com sucesso!');
     }
 
-    /**
-     * 11. EXCLUIR VÍDEO (VIDEO DESTROY)
-     */
     public function videoDestroy($id)
     {
         $video = Video::findOrFail($id);
@@ -406,9 +410,6 @@ class SiteController extends Controller
         return redirect()->route('dashboard.videos')->with('success', 'Vídeo excluído com sucesso!');
     }
 
-    /**
-     * 12. API VÍDEOS
-     */
     public function apiVideos()
     {
         $videos = Video::latest()->get();

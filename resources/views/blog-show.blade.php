@@ -13,7 +13,6 @@
 <body>
     <div class="container">
 
-        <!-- CABEÇALHO FIXO (MENU ESQ + LOGO CENTRO + BUSCA DIR) -->
         <header>
             <div class="cabecalho">
                 <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
@@ -34,28 +33,23 @@
                     <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
                     <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
 
-                    <!-- Cadastrar-me -->
                     <a href="{{ route('extras.register') }}" class="{{ request()->routeIs('extras.register') ? 'active' : '' }}">
                         Cadastrar-me
                     </a>
 
-                    <!-- Entrar -->
                     <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
                         Entrar
                     </a>
 
-                    <!-- Extras (Usuário Comum) -->
                     <a href="{{ route('extras') }}" class="{{ request()->routeIs('extras') ? 'active' : '' }}">
                         Extras
                     </a>
 
-                    <!-- Página Equipe por último -->
                     <a href="{{ route('admin.login') }}" class="{{ request()->routeIs('admin.register') || request()->routeIs('admin.login') ? 'active' : '' }}">
                         Equipe
                     </a>
                 </nav>
 
-                <!-- Barra de Pesquisa na Página -->
                 <form action="{{ url()->current() }}" method="GET" class="search-bar" id="searchBar" role="search">
                     <input type="search" name="q" id="searchInput" class="search-input" value="{{ request('q') }}" placeholder="Pesquisar nesta página..." aria-label="Pesquisar nesta página" autocomplete="off" />
                     <button type="submit" class="search-submit" aria-label="Confirmar busca">
@@ -67,7 +61,6 @@
 
         <div class="nav-backdrop" id="navBackdrop"></div>
 
-        <!-- CONTEÚDO DA NOTÍCIA -->
         <main class="container-blog" id="conteudoPesquisavel">
             <div class="espacoo"></div>
 
@@ -94,28 +87,73 @@
                         : null;
                     $fallbackDetalhe = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop';
 
-                    $ytId = null;
-                    if (!empty($post->youtube_url) && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', $post->youtube_url, $m)) {
-                        $ytId = $m[1];
+                    $listaCandidatas = [];
+                    if (!empty($post->youtube_url)) {
+                        foreach (preg_split('/[\r\n,]+/', (string) $post->youtube_url) as $u) {
+                            $u = trim($u);
+                            if ($u !== '') $listaCandidatas[] = $u;
+                        }
                     }
+                    if (is_array($post->midias)) {
+                        foreach ($post->midias as $mItem) {
+                            if (is_string($mItem) && trim($mItem) !== '') {
+                                $listaCandidatas[] = trim($mItem);
+                            }
+                        }
+                    }
+                    $listaCandidatas = array_values(array_unique($listaCandidatas));
+
+                    $embedsBlog = [];
+                    $videosLocaisBlog = [];
+                    foreach ($listaCandidatas as $item) {
+                        $ytId = null;
+                        $listId = null;
+                        if (preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', $item, $mVid)) {
+                            $ytId = $mVid[1];
+                        }
+                        if (preg_match('/[?&]list=([A-Za-z0-9_-]+)/', $item, $mList)) {
+                            $listId = $mList[1];
+                        }
+
+                        if ($listId && $ytId) {
+                            $embedsBlog[] = "https://www.youtube-nocookie.com/embed/{$ytId}?list=" . urlencode($listId);
+                        } elseif ($listId) {
+                            $embedsBlog[] = "https://www.youtube-nocookie.com/embed/videoseries?list=" . urlencode($listId);
+                        } elseif ($ytId) {
+                            $embedsBlog[] = "https://www.youtube-nocookie.com/embed/{$ytId}";
+                        } elseif (!str_starts_with($item, 'http') && preg_match('/\.(mp4|mov|avi|mkv|webm)$/i', $item)) {
+                            $videosLocaisBlog[] = asset('storage/' . $item);
+                        }
+                    }
+                    $embedsBlog = array_values(array_unique($embedsBlog));
+                    $videosLocaisBlog = array_values(array_unique($videosLocaisBlog));
                 @endphp
 
                 @if ($imgDetalhe)
                     <img src="{{ $imgDetalhe }}" alt="{{ $post->titulo }}" class="imagem-detalhe" onerror="this.onerror=null;this.src='{{ $fallbackDetalhe }}';">
                 @endif
 
-                @if ($ytId)
+                @foreach ($embedsBlog as $embedSrc)
                     <div class="video-detalhe" style="width: 100%; aspect-ratio: 16 / 9; margin: 20px 0; border-radius: 12px; overflow: hidden;">
                         <iframe
-                            src="https://www.youtube-nocookie.com/embed/{{ $ytId }}"
-                            title="YouTube video player"
+                            src="{{ $embedSrc }}"
+                            title="Player do YouTube"
                             style="width: 100%; height: 100%; border: 0; display: block;"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerpolicy="strict-origin-when-cross-origin"
                             allowfullscreen
                         ></iframe>
                     </div>
-                @endif
+                @endforeach
+
+                @foreach ($videosLocaisBlog as $srcLocal)
+                    <div class="video-detalhe" style="width: 100%; margin: 20px 0; border-radius: 12px; overflow: hidden;">
+                        <video controls preload="metadata" style="width: 100%; max-height: 500px; display: block;">
+                            <source src="{{ $srcLocal }}" type="video/mp4">
+                            Seu navegador não suporta a exibição deste vídeo.
+                        </video>
+                    </div>
+                @endforeach
 
                 <div class="conteudo-texto">
                     {!! nl2br(e($post->conteudo)) !!}

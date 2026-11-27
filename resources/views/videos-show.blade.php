@@ -82,51 +82,115 @@
                 <h1>{{ $video->titulo }}</h1>
 
                 @php
-                    $candidata = $video->youtube_url ?? $video->url_video ?? $video->arquivo ?? null;
-                    $ytId = null;
-                    if (!empty($candidata) && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', (string) $candidata, $m)) {
-                        $ytId = $m[1];
+                    $extrairListaUrls = function (?string $texto): array {
+                        if (!$texto) {
+                            return [];
+                        }
+                        preg_match_all('/https?:\/\/[^\s,]+/i', $texto, $matches);
+                        $brutas = $matches[0] ?? [];
+                        if (empty($brutas)) {
+                            $brutas = preg_split('/[\r\n,]+/', $texto) ?: [];
+                        }
+                        $limpas = [];
+                        foreach ($brutas as $u) {
+                            $uClean = trim($u, " \t\n\r\0\x0B\"'(),;");
+                            if ($uClean !== '' && filter_var($uClean, FILTER_VALIDATE_URL)) {
+                                $limpas[] = $uClean;
+                            }
+                        }
+                        return array_values(array_unique($limpas));
+                    };
+
+                    $candidatas = [];
+                    foreach ([$video->youtube_url, $video->url_video, $video->arquivo] as $campo) {
+                        if (!empty($campo)) {
+                            foreach ($extrairListaUrls((string) $campo) as $u) {
+                                $candidatas[] = $u;
+                            }
+                            foreach (preg_split('/[\r\n,]+/', (string) $campo) as $bruto) {
+                                $bruto = trim($bruto);
+                                if ($bruto !== '' && !str_starts_with($bruto, 'http')) {
+                                    $candidatas[] = $bruto;
+                                }
+                            }
+                        }
+                    }
+                    if (is_array($video->midias)) {
+                        foreach ($video->midias as $mItem) {
+                            if (is_string($mItem) && trim($mItem) !== '') {
+                                $candidatas[] = trim($mItem);
+                            }
+                        }
+                    }
+                    $candidatas = array_values(array_unique($candidatas));
+
+                    $embeds = [];
+                    $arquivosLocais = [];
+                    $primeiroYtId = null;
+
+                    foreach ($candidatas as $item) {
+                        $ytId = null;
+                        $listId = null;
+                        if (preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', $item, $mVid)) {
+                            $ytId = $mVid[1];
+                            if (!$primeiroYtId) {
+                                $primeiroYtId = $ytId;
+                            }
+                        }
+                        if (preg_match('/[?&]list=([A-Za-z0-9_-]+)/', $item, $mList)) {
+                            $listId = $mList[1];
+                        }
+
+                        if ($listId && $ytId) {
+                            $embeds[] = "https://www.youtube-nocookie.com/embed/{$ytId}?list=" . urlencode($listId);
+                        } elseif ($listId) {
+                            $embeds[] = "https://www.youtube-nocookie.com/embed/videoseries?list=" . urlencode($listId);
+                        } elseif ($ytId) {
+                            $embeds[] = "https://www.youtube-nocookie.com/embed/{$ytId}";
+                        } elseif (!str_starts_with($item, 'http')) {
+                            $arquivosLocais[] = asset('storage/' . $item);
+                        }
                     }
 
-                    $thumb = !empty($video->thumbnail_url)
-                        ? $video->thumbnail_url
-                        : ($ytId ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg" : null);
+                    $embeds = array_values(array_unique($embeds));
+                    $arquivosLocais = array_values(array_unique($arquivosLocais));
 
-                    $embedUrl = $ytId ? "https://www.youtube-nocookie.com/embed/{$ytId}" : null;
-
-                    $arquivoLocal = (!$ytId && !empty($video->arquivo) && !str_starts_with((string) $video->arquivo, 'http'))
-                        ? asset('storage/' . $video->arquivo)
-                        : null;
+                    $thumbsLista = $extrairListaUrls($video->thumbnail_url ?? null);
+                    $thumb = $thumbsLista[0] ?? ($primeiroYtId ? "https://img.youtube.com/vi/{$primeiroYtId}/hqdefault.jpg" : null);
                 @endphp
 
-                @if ($thumb)
+                @foreach ($thumbsLista as $imgThumb)
                     <div style="width: 100%; margin: 20px 0;">
                         <img
-                            src="{{ $thumb }}"
+                            src="{{ $imgThumb }}"
                             alt="Thumbnail de {{ $video->titulo }}"
                             class="imagem-detalhe"
                             style="width: 100%; aspect-ratio: 16 / 10; max-height: 420px; object-fit: cover; object-position: center; border-radius: 12px; display: block; margin: 0;"
                         >
                     </div>
-                @endif
+                @endforeach
 
-                <div class="imagem-detalhe" style="width: 100%; background-color: #000; max-height: none; overflow: hidden; border-radius: 12px;">
-                    @if ($embedUrl)
+                @foreach ($embeds as $embedSrc)
+                    <div class="imagem-detalhe" style="width: 100%; margin: 20px 0; max-height: none; overflow: hidden; border-radius: 12px;">
                         <iframe
-                            src="{{ $embedUrl }}"
+                            src="{{ $embedSrc }}"
                             frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerpolicy="strict-origin-when-cross-origin"
                             allowfullscreen
                             style="width: 100%; aspect-ratio: 16 / 9; min-height: 360px; display: block; border: 0;"
                         ></iframe>
-                    @elseif ($arquivoLocal)
+                    </div>
+                @endforeach
+
+                @foreach ($arquivosLocais as $arqLocal)
+                    <div class="imagem-detalhe" style="width: 100%; margin: 20px 0; max-height: none; overflow: hidden; border-radius: 12px;">
                         <video controls @if($thumb) poster="{{ $thumb }}" @endif style="width: 100%; max-height: 500px; display: block;" preload="metadata">
-                            <source src="{{ $arquivoLocal }}" type="video/mp4">
+                            <source src="{{ $arqLocal }}" type="video/mp4">
                             Seu navegador não suporta a exibição de vídeos.
                         </video>
-                    @endif
-                </div>
+                    </div>
+                @endforeach
 
                 <div class="conteudo-texto">
                     {!! nl2br(e($video->descricao)) !!}

@@ -17,8 +17,8 @@ class BlogSeeder extends Seeder
             [
                 'titulo'      => 'Você conhece o Google Family Link?',
                 'conteudo'    => "Este vídeo faz parte do Curso Google Family Link\n\nSeus filhos estão muito conectados? Você sabia que dá pra limitar o uso do celular de forma fácil e automática?\n🚫 Mensagens? Proibido!\n😴 Celular depois das 22h? Não pode! Com o Google Family Link, você pode controlar exatamente o que seu filho pode fazer no smartphone.\n\nDesde 2017, o Family Link vem sendo atualizado, permitindo que os pais criem regras sobre o que os filhos podem acessar, o tempo de tela e até mesmo em quais horários eles podem usar o celular.\n\n📅 Seja Android ou iPhone, você terá controle total de maneira simples!\n\nQuer saber como configurar? Vou te ensinar o passo a passo para usar o Google Family Link e garantir uma navegação segura e saudável para seus filhos! 👨‍👩‍👧‍👦.",
-                'imagem'      => 'https://i.ytimg.com/vi/ON4hvwu-XME/maxresdefault.jpg',
-                'youtube_url' => 'https://www.youtube.com/watch?v=ON4hvwu-XME',
+                'imagem'      => 'https://i.ytimg.com/vi/psiKm-E4hes/hqdefault.jpg?sqp=-oaymwEnCPYBEIoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBtzeQPGjJm80yJssvTQ-IKY3OvfA',
+                'youtube_url' => 'https://youtube.com/playlist?list=PLctQ-77DDszY',
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],
@@ -27,7 +27,7 @@ class BlogSeeder extends Seeder
             [
                 'titulo'      => '[ALERTA] NÃO DEIXE O CELULAR ESCRAVIZAR AS CRIANÇAS - vídeo educativo para mostrar pais e crianças',
                 'conteudo'    => "vídeo educativo curto que mostra de forma lúdica o que os celulares fazem com as crianças e também adultos.\n\nassista e repense seus comportamentos\nestimule as crianças a brincadeiras saudáveis.",
-                'imagem'      => 'https://i.ytimg.com/vi/uuDbHj1P8dU/hqdefault.jpg',
+                'imagem'      => 'https://i.ytimg.com/vi/uuDbHj1P8dU/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AGoA4AC8AGKAgwIABABGFwgXChcMA8=&rs=AOn4CLBZNnWzYXBZouh9WNhZ9aQrAavuOA',
                 'youtube_url' => 'https://www.youtube.com/watch?v=uuDbHj1P8dU',
                 'created_at'  => now()->subDays(1),
                 'updated_at'  => now()->subDays(1),

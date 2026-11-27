@@ -80,10 +80,10 @@
                                 <label for="imagem">Imagem(ns) do PC (pode selecionar mais de uma)</label>
                                 <input type="file" name="imagem[]" id="imagem" accept="image/*" multiple>
                                 @if (isset($postEdicao) && $postEdicao->imagem)
-                                    <small style="color: #6b7280; display: block; margin-top: 6px;">Imagem atual:</small>
+                                    <small style="color: #6b7280; display: block; margin-top: 6px;">Imagem(ns) atual(is):</small>
                                     <div style="margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap;">
                                         @foreach((is_array($postEdicao->midias) && count($postEdicao->midias) ? $postEdicao->midias : [$postEdicao->imagem]) as $midiaItem)
-                                            @if(is_string($midiaItem) && !preg_match('/(?:youtube\.com|youtu\.be)/', $midiaItem))
+                                            @if(is_string($midiaItem) && !preg_match('/(?:youtube\.com|youtu\.be)/', $midiaItem) && !preg_match('/\.(mp4|mov|avi|mkv|webm)$/i', $midiaItem))
                                                 <img src="{{ str_starts_with($midiaItem, 'http') ? $midiaItem : asset('storage/' . $midiaItem) }}" alt="Preview" style="max-height: 80px; border-radius: 6px; object-fit: cover;">
                                             @endif
                                         @endforeach
@@ -92,14 +92,13 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="imagem_url">Link da Imagem (URL externa, opcional)</label>
-                                <input
-                                    type="url"
+                                <label for="imagem_url">Link(s) da Imagem (URL externa, um por linha ou separados por vírgula)</label>
+                                <textarea
                                     name="imagem_url"
                                     id="imagem_url"
-                                    value="{{ old('imagem_url', isset($postEdicao->imagem) && str_starts_with((string) $postEdicao->imagem, 'http') ? $postEdicao->imagem : '') }}"
-                                    placeholder="https://exemplo.com/imagem.jpg"
-                                >
+                                    rows="2"
+                                    placeholder="https://exemplo.com/imagem1.jpg&#10;https://exemplo.com/imagem2.jpg"
+                                >{{ old('imagem_url', isset($postEdicao->imagem) && str_starts_with((string) $postEdicao->imagem, 'http') ? $postEdicao->imagem : '') }}</textarea>
                                 <div id="blog-img-url-preview" style="margin-top: 10px; display: none;">
                                     <small style="color: #6b7280; display: block; margin-bottom: 6px;">Prévia do link da imagem:</small>
                                     <img id="blog-img-url-tag" src="" alt="Prévia da imagem" style="max-height: 140px; max-width: 100%; border-radius: 8px; object-fit: cover;">
@@ -107,18 +106,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="youtube_url">Link do YouTube (opcional)</label>
-                                <input
-                                    type="url"
+                                <label for="youtube_url">Link(s) de Vídeos ou Playlists do YouTube (um por linha ou separados por vírgula)</label>
+                                <textarea
                                     name="youtube_url"
                                     id="youtube_url"
-                                    value="{{ old('youtube_url', $postEdicao->youtube_url ?? '') }}"
-                                    placeholder="https://www.youtube.com/watch?v=..."
-                                >
-                                <div id="blog-yt-preview" style="margin-top: 10px; display: none;">
-                                    <small style="color: #6b7280; display: block; margin-bottom: 6px;">Prévia automática do YouTube:</small>
-                                    <iframe id="blog-yt-iframe" src="" style="width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px;" allowfullscreen></iframe>
-                                </div>
+                                    rows="3"
+                                    placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/playlist?list=..."
+                                >{{ old('youtube_url', $postEdicao->youtube_url ?? '') }}</textarea>
+                                <div id="blog-yt-preview" style="margin-top: 10px; display: grid; gap: 10px;"></div>
                             </div>
 
                             <div class="form-group">
@@ -205,9 +200,9 @@
             const imgTag = document.getElementById('blog-img-url-tag');
 
             function atualizarImgPreview() {
-                const url = (imgUrlInput.value || '').trim();
-                if (url && /^https?:\/\//i.test(url)) {
-                    imgTag.src = url;
+                const raw = (imgUrlInput.value || '').split(/[\r\n,]+/).map(s => s.trim()).find(u => /^https?:\/\//i.test(u));
+                if (raw) {
+                    imgTag.src = raw;
                     imgBox.style.display = 'block';
                 } else {
                     imgTag.src = '';
@@ -223,22 +218,34 @@
 
             const ytInput = document.getElementById('youtube_url');
             const ytBox = document.getElementById('blog-yt-preview');
-            const ytIframe = document.getElementById('blog-yt-iframe');
 
-            function extrairId(url) {
-                const match = (url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-                return match ? match[1] : null;
+            function montarEmbedUrl(url) {
+                const vidMatch = (url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+                const listMatch = (url || '').match(/[?&]list=([A-Za-z0-9_-]+)/);
+                const vidId = vidMatch ? vidMatch[1] : null;
+                const listId = listMatch ? listMatch[1] : null;
+
+                if (listId && vidId) return 'https://www.youtube-nocookie.com/embed/' + vidId + '?list=' + encodeURIComponent(listId);
+                if (listId) return 'https://www.youtube-nocookie.com/embed/videoseries?list=' + encodeURIComponent(listId);
+                if (vidId) return 'https://www.youtube-nocookie.com/embed/' + vidId;
+                return null;
             }
 
             function atualizarYtPreview() {
-                const id = extrairId(ytInput.value);
-                if (id) {
-                    ytIframe.src = 'https://www.youtube-nocookie.com/embed/' + id;
-                    ytBox.style.display = 'block';
-                } else {
-                    ytIframe.src = '';
-                    ytBox.style.display = 'none';
-                }
+                const urls = (ytInput.value || '').split(/[\r\n,]+/).map(s => s.trim()).filter(Boolean);
+                const embeds = [...new Set(urls.map(montarEmbedUrl).filter(Boolean))];
+
+                ytBox.innerHTML = '';
+                embeds.forEach((src) => {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = src;
+                    iframe.style.width = '100%';
+                    iframe.style.aspectRatio = '16 / 9';
+                    iframe.style.border = '0';
+                    iframe.style.borderRadius = '8px';
+                    iframe.allowFullscreen = true;
+                    ytBox.appendChild(iframe);
+                });
             }
 
             ytInput.addEventListener('input', atualizarYtPreview);

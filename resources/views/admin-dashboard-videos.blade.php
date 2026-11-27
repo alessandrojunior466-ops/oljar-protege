@@ -63,7 +63,7 @@
 
                     <div class="welcome-card">
                         <h2>{{ isset($videoEdicao) && $videoEdicao ? 'Editar Vídeo' : 'Novo Vídeo' }}</h2>
-                        <p class="form-subtitle">Use este espaço para gerenciar os vídeos da plataforma.</p>
+                        <p class="form-subtitle">Use este espaço para gerenciar os vídeos e playlists da plataforma.</p>
 
                         <form action="{{ isset($videoEdicao) && $videoEdicao ? route('videos.update', $videoEdicao->id) : route('videos.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -72,47 +72,38 @@
                             @endif
 
                             <div class="form-group">
-                                <label for="titulo">Título do Vídeo</label>
+                                <label for="titulo">Título do Vídeo / Playlist</label>
                                 <input type="text" name="titulo" id="titulo" value="{{ old('titulo', $videoEdicao->titulo ?? '') }}" required placeholder="Ex: Como identificar sinais de risco...">
                             </div>
 
-                            <!-- URL DA THUMBNAIL ANTES DO VÍDEO -->
                             <div class="form-group">
-                                <label for="thumbnail_url">URL da Thumbnail (imagem antes do vídeo, opcional)</label>
-                                <input
-                                    type="url"
+                                <label for="thumbnail_url">URL(s) da Thumbnail / Imagem (separadas por vírgula, linha ou espaço, opcional)</label>
+                                <textarea
                                     name="thumbnail_url"
                                     id="thumbnail_url"
-                                    value="{{ old('thumbnail_url', $videoEdicao->thumbnail_url ?? '') }}"
-                                    placeholder="https://exemplo.com/thumbnail.jpg"
-                                >
-                                <div id="vid-thumb-preview" style="margin-top: 10px; display: none;">
-                                    <small style="color: #6b7280; display: block; margin-bottom: 6px;">Prévia da Thumbnail:</small>
-                                    <img id="vid-thumb-img" src="" alt="Prévia da thumbnail" style="max-height: 140px; max-width: 100%; border-radius: 8px; object-fit: cover;">
-                                </div>
+                                    rows="3"
+                                    placeholder="https://exemplo.com/thumb1.jpg, https://exemplo.com/thumb2.png&#10;https://exemplo.com/thumb3.webp"
+                                >{{ old('thumbnail_url', $videoEdicao->thumbnail_url ?? '') }}</textarea>
+                                <div id="vid-thumb-preview" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="video">Arquivo(s) do Vídeo do PC (pode selecionar mais de um)</label>
                                 <input type="file" name="video[]" id="video" accept="video/mp4,video/quicktime,video/avi,video/mkv,video/webm" multiple>
                                 @if (isset($videoEdicao) && $videoEdicao->arquivo)
-                                    <small style="color: #6b7280; display: block; margin-top: 4px;">Vídeo atual salvo: {{ basename($videoEdicao->arquivo) }}</small>
+                                    <small style="color: #6b7280; display: block; margin-top: 4px;">Arquivo principal atual: {{ basename($videoEdicao->arquivo) }}</small>
                                 @endif
                             </div>
 
                             <div class="form-group">
-                                <label for="youtube_url">Link do YouTube (opcional)</label>
-                                <input
-                                    type="url"
+                                <label for="youtube_url">Link(s) de Vídeos ou Playlists do YouTube (um por linha ou separados por vírgula)</label>
+                                <textarea
                                     name="youtube_url"
                                     id="youtube_url"
-                                    value="{{ old('youtube_url', $videoEdicao->youtube_url ?? (isset($videoEdicao->arquivo) && str_starts_with((string) $videoEdicao->arquivo, 'http') ? $videoEdicao->arquivo : '')) }}"
-                                    placeholder="https://www.youtube.com/watch?v=..."
-                                >
-                                <div id="video-yt-preview" style="margin-top: 10px; display: none;">
-                                    <small style="color: #6b7280; display: block; margin-bottom: 6px;">Prévia automática do YouTube:</small>
-                                    <iframe id="video-yt-iframe" src="" style="width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px;" allowfullscreen></iframe>
-                                </div>
+                                    rows="3"
+                                    placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/playlist?list=..."
+                                >{{ old('youtube_url', $videoEdicao->youtube_url ?? (isset($videoEdicao->arquivo) && str_starts_with((string) $videoEdicao->arquivo, 'http') ? $videoEdicao->arquivo : '')) }}</textarea>
+                                <div id="video-yt-preview" style="margin-top: 10px; display: grid; gap: 10px;"></div>
                             </div>
 
                             <div class="form-group">
@@ -145,7 +136,12 @@
                                         $ytId = $m[1];
                                     }
 
-                                    $thumbSrc = $video->thumbnail_url ?? ($ytId ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg" : null);
+                                    $primeiraThumb = null;
+                                    if (!empty($video->thumbnail_url) && preg_match('/https?:\/\/[^\s,]+/i', (string) $video->thumbnail_url, $mThumb)) {
+                                        $primeiraThumb = trim($mThumb[0], " \t\n\r\0\x0B\"'(),;");
+                                    }
+
+                                    $thumbSrc = $primeiraThumb ?? ($ytId ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg" : null);
                                 @endphp
 
                                 <div class="post-item" style="display: flex; gap: 16px; align-items: flex-start;">
@@ -194,42 +190,62 @@
 
     <script>
         (function () {
+            function extrairUrls(texto) {
+                const matches = (texto || '').match(/https?:\/\/[^\s,]+/gi) || [];
+                return [...new Set(matches.map(u => u.replace(/[),;]+$/, '')))];
+            }
+
             const thumbInput = document.getElementById('thumbnail_url');
             const thumbBox = document.getElementById('vid-thumb-preview');
-            const thumbImg = document.getElementById('vid-thumb-img');
 
             function atualizarThumb() {
-                const url = (thumbInput.value || '').trim();
-                if (url && /^https?:\/\//i.test(url)) {
-                    thumbImg.src = url;
-                    thumbBox.style.display = 'block';
-                } else {
-                    thumbImg.src = '';
-                    thumbBox.style.display = 'none';
-                }
+                const urls = extrairUrls(thumbInput.value);
+                thumbBox.innerHTML = '';
+                urls.forEach((url) => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Prévia da thumbnail';
+                    img.style.maxHeight = '110px';
+                    img.style.maxWidth = '180px';
+                    img.style.borderRadius = '8px';
+                    img.style.objectFit = 'cover';
+                    img.addEventListener('error', () => img.remove());
+                    thumbBox.appendChild(img);
+                });
             }
             thumbInput.addEventListener('input', atualizarThumb);
-            thumbImg.addEventListener('error', () => { thumbBox.style.display = 'none'; });
             atualizarThumb();
 
             const ytInput = document.getElementById('youtube_url');
             const ytBox = document.getElementById('video-yt-preview');
-            const ytIframe = document.getElementById('video-yt-iframe');
 
-            function extrairId(url) {
-                const match = (url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-                return match ? match[1] : null;
+            function montarEmbedUrl(url) {
+                const vidMatch = (url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+                const listMatch = (url || '').match(/[?&]list=([A-Za-z0-9_-]+)/);
+                const vidId = vidMatch ? vidMatch[1] : null;
+                const listId = listMatch ? listMatch[1] : null;
+
+                if (listId && vidId) return 'https://www.youtube-nocookie.com/embed/' + vidId + '?list=' + encodeURIComponent(listId);
+                if (listId) return 'https://www.youtube-nocookie.com/embed/videoseries?list=' + encodeURIComponent(listId);
+                if (vidId) return 'https://www.youtube-nocookie.com/embed/' + vidId;
+                return null;
             }
 
             function atualizarPreview() {
-                const id = extrairId(ytInput.value);
-                if (id) {
-                    ytIframe.src = 'https://www.youtube-nocookie.com/embed/' + id;
-                    ytBox.style.display = 'block';
-                } else {
-                    ytIframe.src = '';
-                    ytBox.style.display = 'none';
-                }
+                const urls = extrairUrls(ytInput.value);
+                const embeds = [...new Set(urls.map(montarEmbedUrl).filter(Boolean))];
+
+                ytBox.innerHTML = '';
+                embeds.forEach((src) => {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = src;
+                    iframe.style.width = '100%';
+                    iframe.style.aspectRatio = '16 / 9';
+                    iframe.style.border = '0';
+                    iframe.style.borderRadius = '8px';
+                    iframe.allowFullscreen = true;
+                    ytBox.appendChild(iframe);
+                });
             }
 
             ytInput.addEventListener('input', atualizarPreview);
