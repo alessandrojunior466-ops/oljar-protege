@@ -7,6 +7,7 @@ use App\Models\Blog;
 use App\Models\Video;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class SiteController extends Controller
 {
@@ -74,7 +75,6 @@ class SiteController extends Controller
         $publicacoes = Blog::with('autor')->latest()->get();
         $postEdicao = null;
 
-        // Corrigido para 'admin-dashboard'
         return view('admin-dashboard', compact('publicacoes', 'postEdicao'));
     }
 
@@ -86,7 +86,6 @@ class SiteController extends Controller
         $videos = Video::with('autor')->latest()->get();
         $videoEdicao = null;
 
-        // Ajustado para 'admin-dashboard-videos' (ou 'dashboard-videos' caso prefira)
         return view('admin-dashboard-videos', compact('videos', 'videoEdicao'));
     }
 
@@ -96,23 +95,33 @@ class SiteController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'titulo' => 'required|string|max:255',
-            'conteudo' => 'required|string',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'titulo'      => 'required|string|max:255',
+            'conteudo'    => 'required|string',
+            'imagem'      => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'imagem_url'  => 'nullable|url|max:2000',
+            'youtube_url' => 'nullable|url|max:2000',
         ]);
 
-        $caminhoImagem = null;
+        $imagemFinal = null;
 
         if ($request->hasFile('imagem')) {
-            $caminhoImagem = $request->file('imagem')->store('posts', 'public');
+            $imagemFinal = $request->file('imagem')->store('posts', 'public');
+        } elseif ($request->filled('imagem_url')) {
+            $imagemFinal = $request->imagem_url;
         }
 
-        Blog::create([
-            'titulo' => $request->titulo,
+        $dados = [
+            'titulo'   => $request->titulo,
             'conteudo' => $request->conteudo,
-            'imagem' => $caminhoImagem,
-            'user_id' => Auth::id(),
-        ]);
+            'imagem'   => $imagemFinal,
+            'user_id'  => Auth::id(),
+        ];
+
+        if (Schema::hasColumn('blogs', 'youtube_url')) {
+            $dados['youtube_url'] = $request->filled('youtube_url') ? $request->youtube_url : null;
+        }
+
+        Blog::create($dados);
 
         return redirect()->route('dashboard')->with('success', 'Publicação criada com sucesso!');
     }
@@ -125,7 +134,6 @@ class SiteController extends Controller
         $publicacoes = Blog::with('autor')->latest()->get();
         $postEdicao = Blog::findOrFail($id);
 
-        // Corrigido para 'admin-dashboard'
         return view('admin-dashboard', compact('publicacoes', 'postEdicao'));
     }
 
@@ -135,18 +143,29 @@ class SiteController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'titulo' => 'required|string|max:255',
-            'conteudo' => 'required|string',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'titulo'      => 'required|string|max:255',
+            'conteudo'    => 'required|string',
+            'imagem'      => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'imagem_url'  => 'nullable|url|max:2000',
+            'youtube_url' => 'nullable|url|max:2000',
         ]);
 
         $post = Blog::findOrFail($id);
 
         if ($request->hasFile('imagem')) {
-            if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
+            if ($post->imagem && !str_starts_with($post->imagem, 'http') && Storage::disk('public')->exists($post->imagem)) {
                 Storage::disk('public')->delete($post->imagem);
             }
             $post->imagem = $request->file('imagem')->store('posts', 'public');
+        } elseif ($request->filled('imagem_url')) {
+            if ($post->imagem && !str_starts_with($post->imagem, 'http') && Storage::disk('public')->exists($post->imagem)) {
+                Storage::disk('public')->delete($post->imagem);
+            }
+            $post->imagem = $request->imagem_url;
+        }
+
+        if (Schema::hasColumn('blogs', 'youtube_url')) {
+            $post->youtube_url = $request->filled('youtube_url') ? $request->youtube_url : null;
         }
 
         $post->titulo = $request->titulo;
@@ -163,7 +182,7 @@ class SiteController extends Controller
     {
         $post = Blog::findOrFail($id);
 
-        if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
+        if ($post->imagem && !str_starts_with($post->imagem, 'http') && Storage::disk('public')->exists($post->imagem)) {
             Storage::disk('public')->delete($post->imagem);
         }
 
@@ -178,23 +197,32 @@ class SiteController extends Controller
     public function videoStore(Request $request)
     {
         $request->validate([
-            'titulo' => 'required|string|max:255',
-            'descricao' => 'required|string',
-            'video' => 'required|file|mimes:mp4,mov,avi|max:102400',
+            'titulo'      => 'required|string|max:255',
+            'descricao'   => 'required|string',
+            'video'       => 'nullable|required_without:youtube_url|file|mimes:mp4,mov,avi,mkv|max:102400',
+            'youtube_url' => 'nullable|required_without:video|url|max:2000',
         ]);
 
         $caminhoVideo = null;
 
         if ($request->hasFile('video')) {
             $caminhoVideo = $request->file('video')->store('videos', 'public');
+        } elseif ($request->filled('youtube_url')) {
+            $caminhoVideo = $request->youtube_url;
         }
 
-        Video::create([
-            'titulo' => $request->titulo,
+        $dados = [
+            'titulo'    => $request->titulo,
             'descricao' => $request->descricao,
-            'arquivo' => $caminhoVideo,
-            'user_id' => Auth::id(),
-        ]);
+            'arquivo'   => $caminhoVideo,
+            'user_id'   => Auth::id(),
+        ];
+
+        if (Schema::hasColumn('videos', 'youtube_url')) {
+            $dados['youtube_url'] = $request->filled('youtube_url') ? $request->youtube_url : null;
+        }
+
+        Video::create($dados);
 
         return redirect()->route('dashboard.videos')->with('success', 'Vídeo enviado com sucesso!');
     }
@@ -216,18 +244,28 @@ class SiteController extends Controller
     public function videoUpdate(Request $request, $id)
     {
         $request->validate([
-            'titulo' => 'required|string|max:255',
-            'descricao' => 'required|string',
-            'video' => 'nullable|file|mimes:mp4,mov,avi|max:102400',
+            'titulo'      => 'required|string|max:255',
+            'descricao'   => 'required|string',
+            'video'       => 'nullable|file|mimes:mp4,mov,avi,mkv|max:102400',
+            'youtube_url' => 'nullable|url|max:2000',
         ]);
 
         $video = Video::findOrFail($id);
 
         if ($request->hasFile('video')) {
-            if ($video->arquivo && Storage::disk('public')->exists($video->arquivo)) {
+            if ($video->arquivo && !str_starts_with($video->arquivo, 'http') && Storage::disk('public')->exists($video->arquivo)) {
                 Storage::disk('public')->delete($video->arquivo);
             }
             $video->arquivo = $request->file('video')->store('videos', 'public');
+        } elseif ($request->filled('youtube_url')) {
+            if ($video->arquivo && !str_starts_with($video->arquivo, 'http') && Storage::disk('public')->exists($video->arquivo)) {
+                Storage::disk('public')->delete($video->arquivo);
+            }
+            $video->arquivo = $request->youtube_url;
+        }
+
+        if (Schema::hasColumn('videos', 'youtube_url')) {
+            $video->youtube_url = $request->filled('youtube_url') ? $request->youtube_url : null;
         }
 
         $video->titulo = $request->titulo;
@@ -244,7 +282,7 @@ class SiteController extends Controller
     {
         $video = Video::findOrFail($id);
 
-        if ($video->arquivo && Storage::disk('public')->exists($video->arquivo)) {
+        if ($video->arquivo && !str_starts_with($video->arquivo, 'http') && Storage::disk('public')->exists($video->arquivo)) {
             Storage::disk('public')->delete($video->arquivo);
         }
 
@@ -262,7 +300,7 @@ class SiteController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $videos
+            'data'    => $videos
         ], 200);
     }
 }

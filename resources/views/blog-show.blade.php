@@ -88,8 +88,33 @@
 
                 <h1>{{ $post->titulo }}</h1>
 
-                @if ($post->imagem)
-                    <img src="{{ asset('storage/' . $post->imagem) }}" alt="{{ $post->titulo }}" class="imagem-detalhe">
+                @php
+                    $imgDetalhe = $post->imagem
+                        ? (str_starts_with($post->imagem, 'http') ? $post->imagem : asset('storage/' . $post->imagem))
+                        : null;
+                    $fallbackDetalhe = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop';
+
+                    $ytId = null;
+                    if (!empty($post->youtube_url) && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', $post->youtube_url, $m)) {
+                        $ytId = $m[1];
+                    }
+                @endphp
+
+                @if ($imgDetalhe)
+                    <img src="{{ $imgDetalhe }}" alt="{{ $post->titulo }}" class="imagem-detalhe" onerror="this.onerror=null;this.src='{{ $fallbackDetalhe }}';">
+                @endif
+
+                @if ($ytId)
+                    <div class="video-detalhe" style="width: 100%; aspect-ratio: 16 / 9; margin: 20px 0; border-radius: 12px; overflow: hidden;">
+                        <iframe
+                            src="https://www.youtube-nocookie.com/embed/{{ $ytId }}"
+                            title="YouTube video player"
+                            style="width: 100%; height: 100%; border: 0; display: block;"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
                 @endif
 
                 <div class="conteudo-texto">

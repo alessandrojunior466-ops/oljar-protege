@@ -28,20 +28,24 @@ class BlogApiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'titulo'   => 'required|string|max:255',
-            'conteudo' => 'required|string',
-            'imagem'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'titulo'     => 'required|string|max:255',
+            'conteudo'   => 'required|string',
+            'imagem'     => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'imagem_url' => 'nullable|url|max:2000',
         ]);
 
-        $caminhoImagem = null;
+        $imagemFinal = null;
+
         if ($request->hasFile('imagem')) {
-            $caminhoImagem = $request->file('imagem')->store('posts', 'public');
+            $imagemFinal = $request->file('imagem')->store('posts', 'public');
+        } elseif (!empty($validated['imagem_url'])) {
+            $imagemFinal = $validated['imagem_url'];
         }
 
         $post = Blog::create([
             'titulo'   => $validated['titulo'],
             'conteudo' => $validated['conteudo'],
-            'imagem'   => $caminhoImagem,
+            'imagem'   => $imagemFinal,
         ]);
 
         return response()->json([
@@ -86,16 +90,22 @@ class BlogApiController extends Controller
         }
 
         $validated = $request->validate([
-            'titulo'   => 'required|string|max:255',
-            'conteudo' => 'required|string',
-            'imagem'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'titulo'     => 'required|string|max:255',
+            'conteudo'   => 'required|string',
+            'imagem'     => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'imagem_url' => 'nullable|url|max:2000',
         ]);
 
         if ($request->hasFile('imagem')) {
-            if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
+            if ($post->imagem && !str_starts_with($post->imagem, 'http') && Storage::disk('public')->exists($post->imagem)) {
                 Storage::disk('public')->delete($post->imagem);
             }
             $post->imagem = $request->file('imagem')->store('posts', 'public');
+        } elseif (!empty($validated['imagem_url'])) {
+            if ($post->imagem && !str_starts_with($post->imagem, 'http') && Storage::disk('public')->exists($post->imagem)) {
+                Storage::disk('public')->delete($post->imagem);
+            }
+            $post->imagem = $validated['imagem_url'];
         }
 
         $post->titulo = $validated['titulo'];
@@ -123,7 +133,7 @@ class BlogApiController extends Controller
             ], 404);
         }
 
-        if ($post->imagem && Storage::disk('public')->exists($post->imagem)) {
+        if ($post->imagem && !str_starts_with($post->imagem, 'http') && Storage::disk('public')->exists($post->imagem)) {
             Storage::disk('public')->delete($post->imagem);
         }
 

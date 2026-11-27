@@ -13,11 +13,12 @@ class Blog extends Model
     protected $table = 'blogs';
 
     protected $fillable = [
-        'titulo',
-        'conteudo',
-        'imagem',
-        'user_id', // garante que a chave do autor possa ser gravada
-    ];
+    'titulo',
+    'conteudo',
+    'imagem',
+    'youtube_url',
+    'user_id',
+];
 
     /**
      * Relacionamento com o usuário criador da publicação

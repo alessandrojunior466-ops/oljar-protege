@@ -80,14 +80,44 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="imagem">Imagem da Publicação</label>
-                                <input type="file" name="imagem" id="imagem" accept="image/*" {{ isset($postEdicao) ? '' : 'required' }}>
+                                <label for="imagem">Imagem do PC (opcional se usar link de imagem ou YouTube)</label>
+                                <input type="file" name="imagem" id="imagem" accept="image/*">
                                 @if (isset($postEdicao) && $postEdicao->imagem)
                                     <small style="color: #6b7280; display: block; margin-top: 6px;">Imagem atual:</small>
                                     <div style="margin-top: 4px;">
-                                        <img src="{{ asset('storage/' . $postEdicao->imagem) }}" alt="Preview" style="max-height: 80px; border-radius: 6px; object-fit: cover;">
+                                        <img src="{{ str_starts_with($postEdicao->imagem, 'http') ? $postEdicao->imagem : asset('storage/' . $postEdicao->imagem) }}" alt="Preview" style="max-height: 80px; border-radius: 6px; object-fit: cover;">
                                     </div>
                                 @endif
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imagem_url">Link da Imagem (URL externa, opcional)</label>
+                                <input
+                                    type="url"
+                                    name="imagem_url"
+                                    id="imagem_url"
+                                    value="{{ old('imagem_url', isset($postEdicao->imagem) && str_starts_with((string) $postEdicao->imagem, 'http') ? $postEdicao->imagem : '') }}"
+                                    placeholder="https://exemplo.com/imagem.jpg"
+                                >
+                                <div id="blog-img-url-preview" style="margin-top: 10px; display: none;">
+                                    <small style="color: #6b7280; display: block; margin-bottom: 6px;">Prévia do link da imagem:</small>
+                                    <img id="blog-img-url-tag" src="" alt="Prévia da imagem" style="max-height: 140px; max-width: 100%; border-radius: 8px; object-fit: cover;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="youtube_url">Link do YouTube (opcional)</label>
+                                <input
+                                    type="url"
+                                    name="youtube_url"
+                                    id="youtube_url"
+                                    value="{{ old('youtube_url', $postEdicao->youtube_url ?? '') }}"
+                                    placeholder="https://www.youtube.com/watch?v=..."
+                                >
+                                <div id="blog-yt-preview" style="margin-top: 10px; display: none;">
+                                    <small style="color: #6b7280; display: block; margin-bottom: 6px;">Prévia automática do YouTube:</small>
+                                    <iframe id="blog-yt-iframe" src="" style="width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px;" allowfullscreen></iframe>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -114,16 +144,30 @@
 
                         <div class="posts-list">
                             @forelse($publicacoes as $post)
+                                @php
+                                    $ytId = null;
+                                    if (!empty($post->youtube_url) && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', $post->youtube_url, $m)) {
+                                        $ytId = $m[1];
+                                    }
+
+                                    $imgSrc = null;
+                                    if (!empty($post->imagem)) {
+                                        $imgSrc = str_starts_with($post->imagem, 'http')
+                                            ? $post->imagem
+                                            : asset('storage/' . $post->imagem);
+                                    } elseif ($ytId) {
+                                        $imgSrc = "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg";
+                                    }
+                                @endphp
+
                                 <div class="post-item" style="display: flex; gap: 16px; align-items: flex-start;">
-                                    
-                                    <!-- MINIATURA DA IMAGEM -->
-                                    @if($post->imagem)
+
+                                    @if($imgSrc)
                                         <div class="post-thumb-preview" style="width: 110px; height: 75px; min-width: 110px; background-color: #000; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                            <img src="{{ asset('storage/' . $post->imagem) }}" alt="{{ $post->titulo }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                            <img src="{{ $imgSrc }}" alt="{{ $post->titulo }}" style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>
                                     @endif
 
-                                    <!-- INFORMAÇÕES DA PUBLICAÇÃO E BOTOES -->
                                     <div class="post-item-content" style="flex: 1;">
                                         <span class="post-date">Criado em: {{ $post->created_at->format('d/m/Y H:i') }}</span>
                                         <h3 style="margin: 4px 0;">{{ $post->titulo }}</h3>
@@ -153,6 +197,54 @@
         </main>
 
     </div>
+
+    <script>
+        (function () {
+            const imgUrlInput = document.getElementById('imagem_url');
+            const imgBox = document.getElementById('blog-img-url-preview');
+            const imgTag = document.getElementById('blog-img-url-tag');
+
+            function atualizarImgPreview() {
+                const url = (imgUrlInput.value || '').trim();
+                if (url && /^https?:\/\//i.test(url)) {
+                    imgTag.src = url;
+                    imgBox.style.display = 'block';
+                } else {
+                    imgTag.src = '';
+                    imgBox.style.display = 'none';
+                }
+            }
+
+            imgUrlInput.addEventListener('input', atualizarImgPreview);
+            imgTag.addEventListener('error', function () {
+                imgBox.style.display = 'none';
+            });
+            atualizarImgPreview();
+
+            const ytInput = document.getElementById('youtube_url');
+            const ytBox = document.getElementById('blog-yt-preview');
+            const ytIframe = document.getElementById('blog-yt-iframe');
+
+            function extrairId(url) {
+                const match = (url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+                return match ? match[1] : null;
+            }
+
+            function atualizarYtPreview() {
+                const id = extrairId(ytInput.value);
+                if (id) {
+                    ytIframe.src = 'https://www.youtube-nocookie.com/embed/' + id;
+                    ytBox.style.display = 'block';
+                } else {
+                    ytIframe.src = '';
+                    ytBox.style.display = 'none';
+                }
+            }
+
+            ytInput.addEventListener('input', atualizarYtPreview);
+            atualizarYtPreview();
+        })();
+    </script>
 </body>
 
 </html>

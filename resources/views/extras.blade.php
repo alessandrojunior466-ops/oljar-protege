@@ -11,11 +11,11 @@
 
     <div class="extras-wrapper">
         <div class="extras-card-modern">
-            
+
             <span class="badge-restricted">
                 🔒 Área Restrita &bull; Membros
             </span>
-            
+
             <h1 class="extras-title-modern">
                 Bem-vindo aos Conteúdos Exclusivos!
             </h1>
@@ -23,6 +23,10 @@
             <p class="extras-desc-modern">
                 Esta área é dedicada aos usuários cadastrados da plataforma <strong>Olhar Que Protege</strong>. Aqui você tem acesso antecipado a materiais de apoio, guias avançados de segurança digital e recursos educacionais exclusivos para a sua proteção.
             </p>
+
+            <div class="extras-video-modern">
+                <x-you-tube-embed url="https://www.youtube.com/watch?v=MHOtZNkhIlg" />
+            </div>
 
             <div class="extras-actions-modern">
                 <a href="{{ route('blog.index') }}" class="btn-primary-modern">

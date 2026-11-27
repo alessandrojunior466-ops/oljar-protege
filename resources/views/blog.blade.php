@@ -85,26 +85,25 @@
             </div>
 
             @php
-                $colecaoPosts = $posts ?? collect();
-                $destaque = $colecaoPosts->first();
-                $listaSecundaria = $colecaoPosts->values()->all();
+                $colecaoPosts =$posts ?? collect();
+                $destaque = $colecaoPosts->first();$listaSecundaria = $colecaoPosts->values()->all();$fallbackImg = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop';
             @endphp
 
             @if ($destaque)
                 @php
                     $autorDestaque = $destaque->autor?->name ?? $destaque->autor?->nome ?? 'Administrador';
                     $dataDestaque = $destaque->created_at ? $destaque->created_at->format('d/m/Y') : '';
-                    $imgDestaque = $destaque->imagem
-                        ? asset('storage/' . $destaque->imagem)
-                        : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop';
-                    $buscaDestaque = mb_strtolower($destaque->titulo . ' ' . $destaque->conteudo . ' ' . $autorDestaque);
+                    $imgDestaque =$destaque->imagem
+                        ? (str_starts_with($destaque->imagem, 'http') ? $destaque->imagem : asset('storage/' .$destaque->imagem))
+                        : $fallbackImg;
+                    $buscaDestaque = mb_strtolower($destaque->titulo . ' ' . $destaque->conteudo . ' ' .$autorDestaque);
                 @endphp
                 <a href="{{ route('blog.show', $destaque->id) }}"
                    class="post-link searchable-item"
                    data-search="{{ $buscaDestaque }}">
                     <div class="card-post-grande">
                         <div class="imagem-post">
-                            <img src="{{ $imgDestaque }}" alt="{{ $destaque->titulo }}">
+                            <img src="{{ $imgDestaque }}" alt="{{ $destaque->titulo }}" onerror="this.onerror=null;this.src='{{ $fallbackImg }}';">
                         </div>
                         <div class="conteudo-post">
                             <span class="post-date">
@@ -123,20 +122,22 @@
             <!-- Grelha de Publicações Menores -->
             <div class="grade-posts" id="listaPosts">
                 @if (count($listaSecundaria) > 1)
-                    @for ($i = 1; $i < count($listaSecundaria); $i++)
+                    @for ($i = 1; $i < count($listaSecundaria);$i++)
                         @php
-                            $post = $listaSecundaria[$i];
-                            $autorPost = $post->autor?->name ?? $post->autor?->nome ?? 'Administrador';
+                            $post =$listaSecundaria[$i];$autorPost = $post->autor?->name ?? $post->autor?->nome ?? 'Administrador';
                             $dataPost = $post->created_at ? $post->created_at->format('d/m/Y') : '';
-                            $buscaPost = mb_strtolower($post->titulo . ' ' . $post->conteudo . ' ' . $autorPost);
+                            $imgPost =$post->imagem
+                                ? (str_starts_with($post->imagem, 'http') ? $post->imagem : asset('storage/' .$post->imagem))
+                                : null;
+                            $buscaPost = mb_strtolower($post->titulo . ' ' . $post->conteudo . ' ' .$autorPost);
                         @endphp
                         <a href="{{ route('blog.show', $post->id) }}"
                            class="post-link searchable-item"
                            data-search="{{ $buscaPost }}">
                             <div class="card-post-pequeno">
-                                @if ($post->imagem)
+                                @if ($imgPost)
                                     <div class="thumb-wrapper">
-                                        <img src="{{ asset('storage/' . $post->imagem) }}" alt="{{ $post->titulo }}" class="thumb-post">
+                                        <img src="{{ $imgPost }}" alt="{{ $post->titulo }}" class="thumb-post" onerror="this.onerror=null;this.src='{{ $fallbackImg }}';">
                                     </div>
                                 @endif
                                 <div class="conteudo-post-pequeno">
