@@ -34,28 +34,24 @@
                     <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
                     <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
 
-                    <!-- Cadastrar-me -->
                     <a href="{{ route('extras.register') }}" class="{{ request()->routeIs('extras.register') ? 'active' : '' }}">
                         Cadastrar-me
                     </a>
 
-                    <!-- Entrar -->
                     <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
                         Entrar
                     </a>
 
-                    <!-- Extras (Usuário Comum) -->
                     <a href="{{ route('extras') }}" class="{{ request()->routeIs('extras') ? 'active' : '' }}">
                         Extras
                     </a>
 
-                    <!-- Página Equipe por último -->
                     <a href="{{ route('admin.login') }}" class="{{ request()->routeIs('admin.register') || request()->routeIs('admin.login') ? 'active' : '' }}">
                         Equipe
                     </a>
                 </nav>
 
-                <!-- Barra de Pesquisa Expansível (filtra vídeos pela ?q= na própria página) -->
+                <!-- Barra de Pesquisa Expansível -->
                 <form action="{{ route('videos.index') }}" method="GET" class="search-bar" id="searchBar" role="search">
                     <input type="search" name="q" id="searchInput" class="search-input" value="{{ request('q') }}" placeholder="Pesquisar nos vídeos..." aria-label="Pesquisar nos vídeos" autocomplete="off" />
                     <button type="submit" class="search-submit" aria-label="Confirmar busca">
@@ -89,6 +85,26 @@
                     : $videos->values();
 
                 $destaque = $videosFiltrados->first();
+
+                $resolverMidiaVideo = function ($video) {
+                    $candidata = $video->youtube_url ?? $video->url_video ?? $video->arquivo ?? null;
+                    $ytId = null;
+                    if (!empty($candidata) && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', (string) $candidata, $m)) {
+                        $ytId = $m[1];
+                    }
+
+                    $thumb = !empty($video->thumbnail_url)
+                        ? $video->thumbnail_url
+                        : ($ytId ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg" : null);
+
+                    $embedUrl = $ytId ? "https://www.youtube-nocookie.com/embed/{$ytId}" : null;
+
+                    $arquivoLocal = (!$ytId && !empty($video->arquivo) && !str_starts_with((string) $video->arquivo, 'http'))
+                        ? asset('storage/' . $video->arquivo) . '#t=0.1'
+                        : null;
+
+                    return compact('ytId', 'thumb', 'embedUrl', 'arquivoLocal');
+                };
             @endphp
 
             @if ($q !== '')
@@ -99,18 +115,28 @@
             @endif
 
             @if ($destaque)
-                <!-- Vídeo em Destaque (Card Grande) -->
+                @php $mDest = $resolverMidiaVideo($destaque); @endphp
                 <article class="card-post-grande">
                     <a href="{{ route('videos.show', $destaque->id) }}" class="card-link-overlay" aria-label="Abrir vídeo: {{ $destaque->titulo }}"></a>
 
                     <div class="imagem-post">
                         <div class="video-player-container">
-                            @if (filter_var($destaque->arquivo ?? $destaque->url_video, FILTER_VALIDATE_URL))
-                                <iframe src="{{ $destaque->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
-                            @else
+                            @if ($mDest['thumb'])
+                                <div class="video-thumb-media">
+                                    <img src="{{ $mDest['thumb'] }}" alt="{{ $destaque->titulo }}">
+                                    <span class="video-play-badge"><i class="fa-solid fa-play"></i></span>
+                                </div>
+                            @elseif ($mDest['embedUrl'])
+                                <iframe
+                                    src="{{ $mDest['embedUrl'] }}"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen
+                                    class="video-iframe"
+                                ></iframe>
+                            @elseif ($mDest['arquivoLocal'])
                                 <video controls preload="metadata">
-                                    <source src="{{ asset('storage/' . $destaque->arquivo) }}#t=0.1" type="video/mp4">
-                                    O seu navegador não suporta a exibição deste vídeo.
+                                    <source src="{{ $mDest['arquivoLocal'] }}" type="video/mp4">
                                 </video>
                             @endif
                         </div>
@@ -134,19 +160,28 @@
             <!-- Grade de Vídeos Menores -->
             <div class="grade-posts">
                 @forelse($videosFiltrados->skip(1) as $video)
-                    <!-- Card de Vídeo Individual -->
+                    @php $mVid = $resolverMidiaVideo($video); @endphp
                     <article class="card-post-pequeno">
                         <a href="{{ route('videos.show', $video->id) }}" class="card-link-overlay" aria-label="Abrir vídeo: {{ $video->titulo }}"></a>
 
                         <div class="video-thumb-small">
-                            @if (filter_var($video->arquivo ?? $video->url_video, FILTER_VALIDATE_URL))
-                                <iframe src="{{ $video->url_video }}" frameborder="0" allowfullscreen class="video-iframe"></iframe>
-                            @else
-                                <video controls preload="metadata">
-                                    <source src="{{ asset('storage/' . $video->arquivo) }}#t=0.1" type="video/mp4">
-                                    O seu navegador não suporta a exibição deste vídeo.
-                                </video>
-                            @endif
+                            <div class="video-thumb-media">
+                                @if ($mVid['thumb'])
+                                    <img src="{{ $mVid['thumb'] }}" alt="{{ $video->titulo }}">
+                                    <span class="video-play-badge"><i class="fa-solid fa-play"></i></span>
+                                @elseif ($mVid['embedUrl'])
+                                    <iframe
+                                        src="{{ $mVid['embedUrl'] }}"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        referrerpolicy="strict-origin-when-cross-origin"
+                                        allowfullscreen
+                                    ></iframe>
+                                @elseif ($mVid['arquivoLocal'])
+                                    <video controls preload="metadata">
+                                        <source src="{{ $mVid['arquivoLocal'] }}" type="video/mp4">
+                                    </video>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="conteudo-post-pequeno">

@@ -11,7 +11,6 @@
 <body>
     <div class="dashboard-container">
 
-        <!-- BARRA LATERAL (SIDEBAR) -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="160" height="auto" alt="Logo Olhar Que Protege" />
@@ -37,7 +36,6 @@
             </div>
         </aside>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="main-content">
             <header class="content-header">
                 <h1>Gerenciar Vídeos</h1>
@@ -63,7 +61,6 @@
 
                 <div class="dashboard-grid">
 
-                    <!-- ABA DA ESQUERDA: FORMULÁRIO DE CADASTRO/EDIÇÃO DE VÍDEO -->
                     <div class="welcome-card">
                         <h2>{{ isset($videoEdicao) && $videoEdicao ? 'Editar Vídeo' : 'Novo Vídeo' }}</h2>
                         <p class="form-subtitle">Use este espaço para gerenciar os vídeos da plataforma.</p>
@@ -79,9 +76,25 @@
                                 <input type="text" name="titulo" id="titulo" value="{{ old('titulo', $videoEdicao->titulo ?? '') }}" required placeholder="Ex: Como identificar sinais de risco...">
                             </div>
 
+                            <!-- URL DA THUMBNAIL ANTES DO VÍDEO -->
                             <div class="form-group">
-                                <label for="video">Arquivo do Vídeo do PC (opcional se usar YouTube)</label>
-                                <input type="file" name="video" id="video" accept="video/mp4,video/quicktime,video/avi,video/mkv">
+                                <label for="thumbnail_url">URL da Thumbnail (imagem antes do vídeo, opcional)</label>
+                                <input
+                                    type="url"
+                                    name="thumbnail_url"
+                                    id="thumbnail_url"
+                                    value="{{ old('thumbnail_url', $videoEdicao->thumbnail_url ?? '') }}"
+                                    placeholder="https://exemplo.com/thumbnail.jpg"
+                                >
+                                <div id="vid-thumb-preview" style="margin-top: 10px; display: none;">
+                                    <small style="color: #6b7280; display: block; margin-bottom: 6px;">Prévia da Thumbnail:</small>
+                                    <img id="vid-thumb-img" src="" alt="Prévia da thumbnail" style="max-height: 140px; max-width: 100%; border-radius: 8px; object-fit: cover;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="video">Arquivo(s) do Vídeo do PC (pode selecionar mais de um)</label>
+                                <input type="file" name="video[]" id="video" accept="video/mp4,video/quicktime,video/avi,video/mkv,video/webm" multiple>
                                 @if (isset($videoEdicao) && $videoEdicao->arquivo)
                                     <small style="color: #6b7280; display: block; margin-top: 4px;">Vídeo atual salvo: {{ basename($videoEdicao->arquivo) }}</small>
                                 @endif
@@ -93,7 +106,7 @@
                                     type="url"
                                     name="youtube_url"
                                     id="youtube_url"
-                                    value="{{ old('youtube_url', $videoEdicao->youtube_url ?? '') }}"
+                                    value="{{ old('youtube_url', $videoEdicao->youtube_url ?? (isset($videoEdicao->arquivo) && str_starts_with((string) $videoEdicao->arquivo, 'http') ? $videoEdicao->arquivo : '')) }}"
                                     placeholder="https://www.youtube.com/watch?v=..."
                                 >
                                 <div id="video-yt-preview" style="margin-top: 10px; display: none;">
@@ -119,7 +132,6 @@
                         </form>
                     </div>
 
-                    <!-- ABA DA DIREITA: LISTAGEM COM MINIATURA DOS VÍDEOS RECENTES -->
                     <div class="welcome-card">
                         <h2>Vídeos Recentes</h2>
                         <p class="form-subtitle">Vídeos atualmente salvos no seu banco de dados.</p>
@@ -127,19 +139,20 @@
                         <div class="posts-list">
                             @forelse($videos as $video)
                                 @php
-                                    $ytId = null;
                                     $fonteYt = $video->youtube_url ?? (str_contains((string) $video->arquivo, 'http') ? $video->arquivo : null);
+                                    $ytId = null;
                                     if (!empty($fonteYt) && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', $fonteYt, $m)) {
                                         $ytId = $m[1];
                                     }
+
+                                    $thumbSrc = $video->thumbnail_url ?? ($ytId ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg" : null);
                                 @endphp
 
                                 <div class="post-item" style="display: flex; gap: 16px; align-items: flex-start;">
 
-                                    <!-- MINIATURA (YOUTUBE OU VÍDEO DO PC) -->
-                                    @if($ytId)
+                                    @if($thumbSrc)
                                         <div class="video-thumb-preview" style="width: 110px; height: 75px; min-width: 110px; background-color: #000; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                            <img src="https://img.youtube.com/vi/{{ $ytId }}/hqdefault.jpg" alt="{{ $video->titulo }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                            <img src="{{ $thumbSrc }}" alt="{{ $video->titulo }}" style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>
                                     @elseif($video->arquivo)
                                         <div class="video-thumb-preview" style="width: 110px; height: 75px; min-width: 110px; background-color: #000; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -149,7 +162,6 @@
                                         </div>
                                     @endif
 
-                                    <!-- INFORMAÇÕES DO VÍDEO E BOTOES -->
                                     <div class="post-item-content" style="flex: 1;">
                                         <span class="post-date">Cadastrado em: {{ $video->created_at->format('d/m/Y H:i') }}</span>
                                         <h3 style="margin: 4px 0;">{{ $video->titulo }}</h3>
@@ -182,9 +194,27 @@
 
     <script>
         (function () {
-            const input = document.getElementById('youtube_url');
-            const box = document.getElementById('video-yt-preview');
-            const iframe = document.getElementById('video-yt-iframe');
+            const thumbInput = document.getElementById('thumbnail_url');
+            const thumbBox = document.getElementById('vid-thumb-preview');
+            const thumbImg = document.getElementById('vid-thumb-img');
+
+            function atualizarThumb() {
+                const url = (thumbInput.value || '').trim();
+                if (url && /^https?:\/\//i.test(url)) {
+                    thumbImg.src = url;
+                    thumbBox.style.display = 'block';
+                } else {
+                    thumbImg.src = '';
+                    thumbBox.style.display = 'none';
+                }
+            }
+            thumbInput.addEventListener('input', atualizarThumb);
+            thumbImg.addEventListener('error', () => { thumbBox.style.display = 'none'; });
+            atualizarThumb();
+
+            const ytInput = document.getElementById('youtube_url');
+            const ytBox = document.getElementById('video-yt-preview');
+            const ytIframe = document.getElementById('video-yt-iframe');
 
             function extrairId(url) {
                 const match = (url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
@@ -192,17 +222,17 @@
             }
 
             function atualizarPreview() {
-                const id = extrairId(input.value);
+                const id = extrairId(ytInput.value);
                 if (id) {
-                    iframe.src = 'https://www.youtube-nocookie.com/embed/' + id;
-                    box.style.display = 'block';
+                    ytIframe.src = 'https://www.youtube-nocookie.com/embed/' + id;
+                    ytBox.style.display = 'block';
                 } else {
-                    iframe.src = '';
-                    box.style.display = 'none';
+                    ytIframe.src = '';
+                    ytBox.style.display = 'none';
                 }
             }
 
-            input.addEventListener('input', atualizarPreview);
+            ytInput.addEventListener('input', atualizarPreview);
             atualizarPreview();
         })();
     </script>

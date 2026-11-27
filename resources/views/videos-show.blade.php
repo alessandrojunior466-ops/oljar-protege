@@ -13,7 +13,6 @@
 <body>
     <div class="container">
 
-        <!-- CABEÇALHO FIXO (MENU ESQ + LOGO CENTRO + BUSCA DIR) -->
         <header>
             <div class="cabecalho">
                 <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
@@ -34,28 +33,23 @@
                     <a href="{{ route('videos.index') }}" class="{{ request()->routeIs('videos.*') ? 'active' : '' }}">Vídeos</a>
                     <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a>
 
-                    <!-- Cadastrar-me -->
                     <a href="{{ route('extras.register') }}" class="{{ request()->routeIs('extras.register') ? 'active' : '' }}">
                         Cadastrar-me
                     </a>
 
-                    <!-- Entrar -->
                     <a href="{{ route('extras.login') }}" class="{{ request()->routeIs('extras.login') ? 'active' : '' }}">
                         Entrar
                     </a>
 
-                    <!-- Extras (Usuário Comum) -->
                     <a href="{{ route('extras') }}" class="{{ request()->routeIs('extras') ? 'active' : '' }}">
                         Extras
                     </a>
 
-                    <!-- Página Equipe por último -->
                     <a href="{{ route('admin.login') }}" class="{{ request()->routeIs('admin.register') || request()->routeIs('admin.login') ? 'active' : '' }}">
                         Equipe
                     </a>
                 </nav>
 
-                <!-- Barra de Pesquisa na Página -->
                 <form action="{{ url()->current() }}" method="GET" class="search-bar" id="searchBar" role="search">
                     <input type="search" name="q" id="searchInput" class="search-input" value="{{ request('q') }}" placeholder="Pesquisar nesta página..." aria-label="Pesquisar nesta página" autocomplete="off" />
                     <button type="submit" class="search-submit" aria-label="Confirmar busca">
@@ -67,7 +61,6 @@
 
         <div class="nav-backdrop" id="navBackdrop"></div>
 
-        <!-- CONTEÚDO PRINCIPAL DO VÍDEO -->
         <main class="container-blog" id="conteudoPesquisavel">
             <div class="espacoo"></div>
 
@@ -88,19 +81,53 @@
 
                 <h1>{{ $video->titulo }}</h1>
 
-                <!-- PLAYER DE VÍDEO NO LUGAR DA IMAGEM -->
-                <div class="imagem-detalhe" style="background-color: #000; max-height: none; overflow: hidden;">
-                    @if (filter_var($video->arquivo ?? $video->url_video, FILTER_VALIDATE_URL))
-                        <iframe src="{{ $video->url_video }}" frameborder="0" allowfullscreen style="width: 100%; height: 450px; display: block; border: 0;"></iframe>
-                    @else
-                        <video controls style="width: 100%; max-height: 500px; display: block;" preload="metadata">
-                            <source src="{{ asset('storage/' . $video->arquivo) }}" type="video/mp4">
+                @php
+                    $candidata = $video->youtube_url ?? $video->url_video ?? $video->arquivo ?? null;
+                    $ytId = null;
+                    if (!empty($candidata) && preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', (string) $candidata, $m)) {
+                        $ytId = $m[1];
+                    }
+
+                    $thumb = !empty($video->thumbnail_url)
+                        ? $video->thumbnail_url
+                        : ($ytId ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg" : null);
+
+                    $embedUrl = $ytId ? "https://www.youtube-nocookie.com/embed/{$ytId}" : null;
+
+                    $arquivoLocal = (!$ytId && !empty($video->arquivo) && !str_starts_with((string) $video->arquivo, 'http'))
+                        ? asset('storage/' . $video->arquivo)
+                        : null;
+                @endphp
+
+                @if ($thumb)
+                    <div style="width: 100%; margin: 20px 0;">
+                        <img
+                            src="{{ $thumb }}"
+                            alt="Thumbnail de {{ $video->titulo }}"
+                            class="imagem-detalhe"
+                            style="width: 100%; aspect-ratio: 16 / 10; max-height: 420px; object-fit: cover; object-position: center; border-radius: 12px; display: block; margin: 0;"
+                        >
+                    </div>
+                @endif
+
+                <div class="imagem-detalhe" style="width: 100%; background-color: #000; max-height: none; overflow: hidden; border-radius: 12px;">
+                    @if ($embedUrl)
+                        <iframe
+                            src="{{ $embedUrl }}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                            style="width: 100%; aspect-ratio: 16 / 9; min-height: 360px; display: block; border: 0;"
+                        ></iframe>
+                    @elseif ($arquivoLocal)
+                        <video controls @if($thumb) poster="{{ $thumb }}" @endif style="width: 100%; max-height: 500px; display: block;" preload="metadata">
+                            <source src="{{ $arquivoLocal }}" type="video/mp4">
                             Seu navegador não suporta a exibição de vídeos.
                         </video>
                     @endif
                 </div>
 
-                <!-- DESCRIÇÃO DO VÍDEO -->
                 <div class="conteudo-texto">
                     {!! nl2br(e($video->descricao)) !!}
                 </div>

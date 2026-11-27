@@ -10,15 +10,21 @@ class Video extends Model
 {
     use HasFactory;
 
-    // Define explicitamente o nome da tabela no banco de dados
     protected $table = 'videos';
 
     protected $fillable = [
         'titulo',
         'descricao',
         'arquivo',
+        'youtube_url',
+        'thumbnail_url',
+        'midias',
         'user_id',
-        'categoria_id', // Adicionado para permitir o cadastro da categoria
+        'categoria_id',
+    ];
+
+    protected $casts = [
+        'midias' => 'array',
     ];
 
     /**

@@ -11,7 +11,6 @@
 <body>
     <div class="dashboard-container">
 
-        <!-- BARRA LATERAL (SIDEBAR) -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <img src="{{ asset('assets/img/olhar_que_protege_transparente.svg') }}" width="160" height="auto" alt="Logo Olhar Que Protege" />
@@ -37,7 +36,6 @@
             </div>
         </aside>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="main-content">
             <header class="content-header">
                 <h1>Gerenciar Publicações</h1>
@@ -63,7 +61,6 @@
 
                 <div class="dashboard-grid">
 
-                    <!-- ABA DA ESQUERDA: FORMULÁRIO DE CADASTRO/EDIÇÃO DE POST -->
                     <div class="welcome-card">
                         <h2>{{ isset($postEdicao) && $postEdicao ? 'Editar Publicação' : 'Nova Publicação' }}</h2>
                         <p class="form-subtitle">Use este espaço para gerenciar o conteúdo do blog do projeto.</p>
@@ -80,12 +77,16 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="imagem">Imagem do PC (opcional se usar link de imagem ou YouTube)</label>
-                                <input type="file" name="imagem" id="imagem" accept="image/*">
+                                <label for="imagem">Imagem(ns) do PC (pode selecionar mais de uma)</label>
+                                <input type="file" name="imagem[]" id="imagem" accept="image/*" multiple>
                                 @if (isset($postEdicao) && $postEdicao->imagem)
                                     <small style="color: #6b7280; display: block; margin-top: 6px;">Imagem atual:</small>
-                                    <div style="margin-top: 4px;">
-                                        <img src="{{ str_starts_with($postEdicao->imagem, 'http') ? $postEdicao->imagem : asset('storage/' . $postEdicao->imagem) }}" alt="Preview" style="max-height: 80px; border-radius: 6px; object-fit: cover;">
+                                    <div style="margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                        @foreach((is_array($postEdicao->midias) && count($postEdicao->midias) ? $postEdicao->midias : [$postEdicao->imagem]) as $midiaItem)
+                                            @if(is_string($midiaItem) && !preg_match('/(?:youtube\.com|youtu\.be)/', $midiaItem))
+                                                <img src="{{ str_starts_with($midiaItem, 'http') ? $midiaItem : asset('storage/' . $midiaItem) }}" alt="Preview" style="max-height: 80px; border-radius: 6px; object-fit: cover;">
+                                            @endif
+                                        @endforeach
                                     </div>
                                 @endif
                             </div>
@@ -137,7 +138,6 @@
                         </form>
                     </div>
 
-                    <!-- ABA DA DIREITA: LISTAGEM COM MINIATURA DOS POSTS RECENTES -->
                     <div class="welcome-card">
                         <h2>Publicações Recentes</h2>
                         <p class="form-subtitle">Artigos atualmente salvos no seu banco de dados.</p>

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Blog extends Model
 {
@@ -13,12 +12,17 @@ class Blog extends Model
     protected $table = 'blogs';
 
     protected $fillable = [
-    'titulo',
-    'conteudo',
-    'imagem',
-    'youtube_url',
-    'user_id',
-];
+        'titulo',
+        'conteudo',
+        'imagem',
+        'youtube_url',
+        'midias',
+        'user_id',
+    ];
+
+    protected $casts = [
+        'midias' => 'array',
+    ];
 
     /**
      * Relacionamento com o usuário criador da publicação
